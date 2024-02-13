@@ -1,0 +1,40 @@
+Can assume the instruction is valid; 
+
+Will need to convert between hex and binary.
+
+The instructions are fairly succinct.
+
+Have 2 weeks to do it; we will need to demo at least 1 instruction for each type. R, I, S, & SB.
+
+Divide the work: comment on which part you did.
+
+When you submit the work, make sure that the code compiles and runs (no segfaults either) even if there is a low grade.
+
+
+Tasks:
+
+Prompt user for input  
+
+read user input
+
+store input as a char array? 	C-String array.
+
+parse the char array (can assume it is a valid instruction).
+	- divide into the different fields
+	- #1 Op-Code
+	- #2 Funct3
+	- #3 Funct7
+	- #4 Rd
+	- #5 Rs1, Rs1
+	- # Immediates
+
+Function to convert binary to hex
+
+Need functions that output the:  	(note is not applicable for all, depends on the type of instruction)
+	a) correct instuction type
+	b) Operation
+	c) Source Registers Rs1, Rs2
+	d) Destination Registers Rd
+	e) Funct3 
+	f) Funct7
+	g) Immediate (in hex and decimal)
