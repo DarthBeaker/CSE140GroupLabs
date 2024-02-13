@@ -45,3 +45,5 @@ Need functions that output the:  	(note is not applicable for all, depends on th
 	Going to put the def in a .h file, along with the function headers
 
 	.h file for the def later
+
+	convert the binary 1st, then can print easily as decimal and hex will research
