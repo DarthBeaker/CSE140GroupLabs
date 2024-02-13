@@ -38,3 +38,10 @@ Need functions that output the:  	(note is not applicable for all, depends on th
 	e) Funct3 
 	f) Funct7
 	g) Immediate (in hex and decimal)
+
+	Jesse taking I & SB-instructions
+	Kirian taking R & S
+
+	Going to put the def in a .h file, along with the function headers
+
+	.h file for the def later
