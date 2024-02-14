@@ -47,3 +47,11 @@ Need functions that output the:  	(note is not applicable for all, depends on th
 	.h file for the def later
 
 	convert the binary 1st, then can print easily as decimal and hex will research
+
+	copying instructions here, think there is a werid copying issue:
+
+	R: 	00000000001100100000001010110011
+	I: 	00000000101001100111011010010011
+	S: 	111111100011001000100000100011
+	SB:	00000001111000101001001101100011
+	UJ:
