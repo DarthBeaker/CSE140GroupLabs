@@ -27,13 +27,13 @@ char parse_instructions(char* instr){   //since the Opcode is always the last 7 
     else if(strcmp(opCode, I) == 0) {
         return 'I';
     }
-    else if(strcmp(opCode, S) == 0){
+    else if(strcmp(opCode, S) == 0) {
         return 'S';
     }
-    else if(strcmp(opCode, SB) == 0){
+    else if(strcmp(opCode, SB) == 0) {
         return 'B';                         //Note: this is our shorthand for SB JLP
     }
-    else if(strcmp(opCode, UJ) == 0){
+    else if(strcmp(opCode, UJ) == 0) {
         return 'U';                         //Note: this is our shorthand for UJ JLP
     }
 
