@@ -17,5 +17,8 @@ void main() {
 
     //call parse_instruction print return symbol for now.
     printf("%c\n",parse_instructions(instr));
+
+    //call parse_funct3 and print the decimal value of it for now.
+    printf("%i\n", parse_funct3(instr));
     
 }

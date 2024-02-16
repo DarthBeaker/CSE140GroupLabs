@@ -13,7 +13,7 @@ When you submit the work, make sure that the code compiles and runs (no segfault
 
 Tasks:
 
-Prompt user for input  
+Prompt user for input  ***These should go in print(), currently in main
 
 read user input
 
