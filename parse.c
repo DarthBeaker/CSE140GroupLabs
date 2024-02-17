@@ -10,7 +10,7 @@ void main() {
     
     printf("Enter an instruction: ");
 
-    fgets(instr, sizeof(instr)+1, stdin);
+    fgets(instr, sizeof(instr), stdin);
 
     //echo the data for testing JLP
     printf("%s\n", instr);
@@ -21,4 +21,5 @@ void main() {
     //call parse_funct3 and print the decimal value of it for now.
     printf("%i\n", parse_funct3(instr));
     
+    printf("%i\n", parse_funct7(instr));
 }

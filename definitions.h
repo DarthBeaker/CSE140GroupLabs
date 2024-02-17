@@ -11,7 +11,7 @@ const int ImmSz2 = 16;
 //function definitions
 void print_instructions(char*); //main function will call subfunctions KP
 char parse_instructions(char*); //find the opcode, returns instruct type KP
-int parse_immediate(char*);
 int parse_funct3(char*);
 int parse_funct7(char*);
+int parse_immediate(char*);
 int parse_register(char*);
