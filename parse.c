@@ -10,7 +10,7 @@ void main() {
     
     printf("Enter an instruction: ");
 
-    fgets(instr, sizeof(instr), stdin);
+    fgets(instr, sizeof(instr) + 1, stdin);
 
     //echo the data for testing JLP
     printf("%s\n", instr);

@@ -53,6 +53,11 @@ Need functions that output the:  	(note is not applicable for all, depends on th
 	S: 	11111110001100100000100000100011
 	SB:	00000001111000101001001101100011
 	UJ:
+	U: both have different OPcodes... added on 2/22/24
 
 	2/16/24 parse_instruction is working; returns a single char that will need to 
 	be interpreted by the print function. JLP
+
+	2/22/24 starting broad strokes for the parse_immediate:
+	will need to know the instruction, then can parse Immediate
+	correctly (for the particular instruction)

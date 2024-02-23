@@ -4,7 +4,7 @@
 //entered by the user, and parses the last 7 digits (binary)
 //then recognizes its type. When the type is recognized, a
 //single char is returned for printing in the print function
-//Called by: print function (later)
+//Called by: parse_immediate function, print function (later)
 //Argument: char* instr user entered instruction
 //Returns: char representing the OpCode
 //******************************************
@@ -16,6 +16,7 @@ char parse_instructions(char* instr){   //since the Opcode is always the last 7 
     char S[] = "0100011";
     char SB[] = "1100011";
     char UJ[] = "1101111";
+    //lui and andi are both U, and they have different opcodes...
     
     for(int i = instrSz - opCodeSz; i < instrSz; i++) { 
         opCode[i-25] = instr[i]; 
@@ -38,6 +39,12 @@ char parse_instructions(char* instr){   //since the Opcode is always the last 7 
     }
     else if(strcmp(opCode, UJ) == 0) {
         return 'U';                         //Note: this is our shorthand for UJ JLP
+    }
+    else if(strcmp(opCode, "0010111")) {
+        return 'A';                         //for auipc
+    }
+    else if(strcmp(opCode, "0110111")) {
+        return 'L';                         //for lui
     }
 
     printf("%s\n", "Invalid Code");         
@@ -108,7 +115,7 @@ int parse_funct3(char* instr) {
 
 
 //******************************************
-//parse_funct3 takes a char* arg, the instruction
+//parse_funct7 takes a char* arg, the instruction
 //entered by the user, and parses 7 digits (binary) 25-31
 //then recognizes the funct3 code. When the code is recognized, a
 //single int is returned for intrepretation in the print function
@@ -143,8 +150,24 @@ int parse_funct7(char* instr){
 //Returns: int represents the immediate
 */
 int parse_immediate(char* instr){
+    char op = parse_immediate(instr);
 
-
+    if(op == 'R') {
+        return -1;                  //indicates no immediate used JLP
+    }
+    else if(op == 'I') {
+        //call sub parse_Imm_I(instr);
+    }
+    else if(op == 'S' || op == 'B') {
+        //call function parse_Imm_S(instr);
+        //is similar to SB
+    }
+    else if(op == 'A' ||op == 'L' || op == 'U') {
+        //call function parse_Imm_U(instr);
+        //covers U & UJ
+    }
+    
+    return -1;              //indicates no go
 }
 
 
