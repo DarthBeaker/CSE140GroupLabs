@@ -129,19 +129,23 @@ int parse_funct7(char* instr){
 //Returns: int represents the immediate
 */
 int parse_immediate(char* instr){
-    char op = parse_immediate(instr);
+    char op = parse_instructions(instr);
 
     if(op == 'R') {
         return -1;                  //indicates no immediate used JLP
     }
     else if(op == 'I') {
-        //call sub parse_Imm_I(instr);
+        int val = sub_parse_Imm_I(instr);
+        printf("%i Immediate: \n", val);
+        printf("%x Imm in hex: ", val);
+        printf("\n");                           //for testing, should be in print
+        return val;
     }
     else if(op == 'S' || op == 'B') {
         //call function parse_Imm_S(instr);
         //is similar to SB
     }
-    else if(op == 'A' ||op == 'L' || op == 'U') {
+    else if(op == 'U') {
         //call function parse_Imm_U(instr);
         //covers U & UJ
     }
@@ -149,6 +153,32 @@ int parse_immediate(char* instr){
     return -1;              //indicates no go
 }
 
+/*
+//sub_parse_Imm_I takes a char* arg, the instruction
+//entered by the user, and parses ? digits depending on 
+//what instruction type it is and calculates the decimal value
+//Called by: parse_immiate
+//Argument: char* instr, 
+//Returns: int represents the immediate decimal value
+*/
+
+int sub_parse_Imm_I(char* instr) {
+    int im_start = 20;
+    int bin_bit_value = 1;
+    int imm_deci_value = 0;
+
+    for (int i = im_start; i < instrSz; i++) { //want the decimal & hex values
+        //calculate the binary
+        if(instr[instrSz - i - 1] == '0') {
+            bin_bit_value = bin_bit_value * 2;
+        }
+        else {
+            imm_deci_value = imm_deci_value + bin_bit_value;
+            bin_bit_value = bin_bit_value * 2;
+        }
+    }
+    return imm_deci_value;
+}
 
 
 

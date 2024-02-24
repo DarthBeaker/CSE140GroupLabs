@@ -22,4 +22,6 @@ void main() {
     printf("%i\n", parse_funct3(instr));
     
     printf("%i\n", parse_funct7(instr));
+
+    printf("%i\n", parse_immediate(instr));
 }
