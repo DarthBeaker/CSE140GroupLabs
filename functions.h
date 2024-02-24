@@ -11,12 +11,6 @@
 
 char parse_instructions(char* instr){   //since the Opcode is always the last 7 bits, we can easily extract them
     char opCode[opCodeSz];
-    char R[] = "0110011";
-    char I[] = "0010011";
-    char S[] = "0100011";
-    char SB[] = "1100011";
-    char UJ[] = "1101111";
-    //lui and andi are both U, and they have different opcodes...
     
     for(int i = instrSz - opCodeSz; i < instrSz; i++) { 
         opCode[i-25] = instr[i]; 
@@ -24,31 +18,25 @@ char parse_instructions(char* instr){   //since the Opcode is always the last 7 
     }
 
     //printf("%s\n", opCode); // is opCode correct?
-
-    if(strcmp(opCode , R) == 0) {            //Which type is it? JLP
+    
+          
+    if(strcmp(opCode , opCodeLU[0]) == 0) {            //Which type is it? JLP
         return 'R';
     }
-    else if(strcmp(opCode, I) == 0) {
+    else if((strcmp(opCode, opCodeLU[1]) == 0 ) || (strcmp(opCode, opCodeLU[2]) == 0) || (strcmp(opCode, opCodeLU[3]) == 0)) {
         return 'I';
     }
-    else if(strcmp(opCode, S) == 0) {
+    else if(strcmp(opCode, opCodeLU[4]) == 0) {
         return 'S';
     }
-    else if(strcmp(opCode, SB) == 0) {
+    else if(strcmp(opCode, opCodeLU[5]) == 0) {
         return 'B';                         //Note: this is our shorthand for SB JLP
     }
-    else if(strcmp(opCode, UJ) == 0) {
-        return 'U';                         //Note: this is our shorthand for UJ JLP
+    else if(strcmp(opCode, opCodeLU[6]) == 0) {
+        return 'J';                         //Note: this is our shorthand for UJ JLP
     }
-    else if(strcmp(opCode, "0010111")) {
-        return 'A';                         //for auipc
-    }
-    else if(strcmp(opCode, "0110111")) {
-        return 'L';                         //for lui
-    }
-
     printf("%s\n", "Invalid Code");         
-     return 'Z';                            //Note: shorthand for invalid code JLP
+    return 'Z';                            //Note: shorthand for invalid code JLP
 }
 
 //******************************************
@@ -65,15 +53,6 @@ int parse_funct3(char* instr) {
     int j = 0;
     char funct3[] ="000";                                   //will hold extracted funct code JLP
     int start = instrSz - (opCodeSz + funct3Sz + rdSz);     //starts loop at start of funct3 code JLP
-    
-    char zero[] = "000";
-    char one[] = "001";
-    char two[] = "010";
-    char three[] = "011";
-    char four[] = "100";
-    char five[] = "101";
-    char six[] = "110";
-    char seven[] = "111";
 
     for(int i = start; i < 20; i++) {                       //extract the funct3 code JLP
         funct3[j] = instr[i];
@@ -84,28 +63,28 @@ int parse_funct3(char* instr) {
 
     //return the decimal number to print or another function 
     //will deal with what that means JLP
-    if(strcmp(funct3,zero) == 0) {
+    if(strcmp(funct3,f3LU[0]) == 0) {
         return 0;
     }
-    else if(strcmp(funct3, one) == 0) {
+    else if(strcmp(funct3, f3LU[1]) == 0) {
         return 1;
     }
-    else if(strcmp(funct3, two) == 0) {
+    else if(strcmp(funct3, f3LU[2]) == 0) {
         return 2;
     }
-    else if(strcmp(funct3, three) == 0) {
+    else if(strcmp(funct3, f3LU[3]) == 0) {
         return 3;
     }
-    else if(strcmp(funct3, four) == 0) {
+    else if(strcmp(funct3, f3LU[4]) == 0) {
         return 4;
     }
-    else if(strcmp(funct3, five) == 0) {
+    else if(strcmp(funct3, f3LU[5]) == 0) {
         return 5;
     }
-    else if(strcmp(funct3, six) == 0) {
+    else if(strcmp(funct3, f3LU[6]) == 0) {
         return 6;
     }
-    else if(strcmp(funct3, seven) == 0) {
+    else if(strcmp(funct3, f3LU[7]) == 0) {
         return 7;
     }
 
