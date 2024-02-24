@@ -17,4 +17,7 @@ int parse_funct3(char*);
 int parse_funct7(char*);
 int parse_immediate(char*);
 int parse_register(char*);
+int sub_parse_Imm(char*, int, int);
+int twosComp(char*, int, int);
 int sub_parse_Imm_I(char*);
+int sub_parse_Imm_S(char*);

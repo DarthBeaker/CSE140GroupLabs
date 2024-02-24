@@ -130,20 +130,24 @@ int parse_funct7(char* instr){
 */
 int parse_immediate(char* instr){
     char op = parse_instructions(instr);
+    int val = 0;
+    
 
     if(op == 'R') {
         return -1;                  //indicates no immediate used JLP
     }
     else if(op == 'I') {
-        int val = sub_parse_Imm_I(instr);
-        printf("%i Immediate: \n", val);
-        printf("%x Imm in hex: ", val);
-        printf("\n");                           //for testing, should be in print
+        val = sub_parse_Imm(instr,20, instrSz);
+        //printf("%i Immediate: \n", val);
+        //printf("%x Imm in hex: ", val);      //for testing, should be in print
         return val;
     }
-    else if(op == 'S' || op == 'B') {
-        //call function parse_Imm_S(instr);
-        //is similar to SB
+    else if(op == 'S') {
+         val = sub_parse_Imm(instr, 25, instrSz) + sub_parse_Imm(instr, 7, 11);
+        return val;
+    }
+    else if(op == 'B') {
+        //consider lumping with S... JLP
     }
     else if(op == 'U') {
         //call function parse_Imm_U(instr);
@@ -180,10 +184,82 @@ int sub_parse_Imm_I(char* instr) {
     return imm_deci_value;
 }
 
+/*
+//sub_parse_Imm takes a char* & 2 ints, the instruction
+//entered by the user, the start & end of the instruction
+// and parses ? digits depending on 
+//what instruction type it is and calculates the decimal value
+//Called by: parse_immiate
+//Argument: char* instr, 
+//Returns: int represents the immediate decimal value
+*/
 
+int sub_parse_Imm(char* instr, int start, int end) {    //most of the time end is instrSz
+    //int im_start = 20;
+    int bin_bit_value = 1;
+    int imm_deci_value = 0;
 
+    for (int i = start; i < end; i++) { //want the decimal & hex values
+        //calculate the binary
+        if(instr[instrSz -i -1] == '0') {
+            bin_bit_value = bin_bit_value * 2;
+        }
+        else {
+            imm_deci_value = imm_deci_value + bin_bit_value;
+            bin_bit_value = bin_bit_value * 2;
+        }
+    }
+    //check if it is negative, if so convert
+    if (imm_deci_value > 15) {
+        imm_deci_value = twosComp(instr, start, end);
+    }
+    return imm_deci_value;
+}
 
+/************************************************************
+//twoComp takes a char* & 2 ints, the instruction
+//entered by the user, the start & end of the instruction
+// and parses ? digits depending on the start end 
+//then finds the 2's compliment and decimal value
+//Called by: parse_immiate
+//Argument: char* instr, int start, int end
+//Returns: int represents the immediate decimal value
+*///**********************************************************
+int twosComp(char* instr, int start, int end) {
+    //int b = end - start;
+    //printf("%d The size of ones&twos comp: \n", b);
+    char onesComp[end - start];
+    char twosComp[end - start];
+    int carryBit = 1;
+    int j = 0;
 
+    for (int i = start; i < end; i++) {
+        if(instr[instrSz - i -1] == '0'){
+            onesComp[j] = '1';
+        }
+        else {
+            onesComp[j] = '0'; 
+        }
+        j++;
+    }
+    //onesComp[end-start] = '\0';
+    for (int k = end - start; k > 0; k--) {
+        if(onesComp[k] == '1' && carryBit == 1) {
+            twosComp[k] = '0';
+        }
+        else if(onesComp[k] == '0' && carryBit == 1) {
+            twosComp[k] = '1';
+            carryBit = 0;
+        }
+        else {
+            twosComp[k] = onesComp[k];
+        }
+    }
+    //twosComp[end-start] = '\0';
+
+    printf("%s\n", twosComp);
+    return 0; //will convert to a decimal next, want to see if it works so far...
+}
 
 //******************************************
 //parse_register will take a char arg and then
@@ -194,6 +270,6 @@ int sub_parse_Imm_I(char* instr) {
 //int to be printed
 //******************************************
 int parse_register(char* instr){
-
+    
  
 }
