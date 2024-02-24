@@ -121,7 +121,7 @@ int parse_funct7(const char* instr){
 
 
 /*
-//parse_immediate takes a char* arg, the instruction
+//parse_immediate takes a const char* arg, the instruction
 //entered by the user, and parses ? digits depending on 
 //what instruction type it is
 //Called by: print function (later)
@@ -176,7 +176,7 @@ int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time
 
     for (int i = start; i < end; i++) { //want the decimal & hex values
         //calculate the binary
-        if(instr[instrSz -i -1] == '0') {
+        if(instr[i] == '0') {
             bin_bit_value = bin_bit_value * 2;
         }
         else {
@@ -209,7 +209,7 @@ int twosComp(const char* instr, int start, int end) {
     int j = 0;
 
     for (int i = start; i < end; i++) {
-        if(instr[instrSz - i -1] == '0'){
+        if(instr[i] == '0'){
             onesComp[j] = '1';
         }
         else {
