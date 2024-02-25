@@ -9,7 +9,7 @@
 //Returns: char representing the OpCode
 //******************************************
 
-char parse_instructions(char* instr){   //since the Opcode is always the last 7 bits, we can easily extract them
+char parse_instructions(const char* instr){   //since the Opcode is always the last 7 bits, we can easily extract them
     char opCode[opCodeSz];
     
     for(int i = instrSz - opCodeSz; i < instrSz; i++) { 
@@ -49,7 +49,7 @@ char parse_instructions(char* instr){   //since the Opcode is always the last 7 
 //Returns: int represents the funct3 code
 //******************************************
 
-int parse_funct3(char* instr) {
+int parse_funct3(const char* instr) {
     int j = 0;
     char funct3[] ="000";                                   //will hold extracted funct code JLP
     int start = instrSz - (opCodeSz + funct3Sz + rdSz);     //starts loop at start of funct3 code JLP
@@ -58,8 +58,8 @@ int parse_funct3(char* instr) {
         funct3[j] = instr[i];
         j++;
     }
-    printf("%s\n", "Funct3 Code:");
-    printf("%s\n", funct3);                 //For testing puroses JLP
+    //printf("%s\n", "Funct3 Code:");
+    //printf("%s\n", funct3);                 //For testing puroses JLP
 
     //return the decimal number to print or another function 
     //will deal with what that means JLP
@@ -102,7 +102,7 @@ int parse_funct3(char* instr) {
 //Argument: char* instr
 //Returns: int represents the funct7 code
 //******************************************
-int parse_funct7(char* instr){
+int parse_funct7(const char* instr){
     const int funct7_size = 7;
     const int funct7_start = 25;
     int funct7_dec_val = 0;
@@ -128,7 +128,7 @@ int parse_funct7(char* instr){
 //Argument: char* instr, ? might need second arg for instruction type ?
 //Returns: int represents the immediate
 */
-int parse_immediate(char* instr){
+int parse_immediate(const char* instr){
     char op = parse_instructions(instr);
     int val = 0;
     
@@ -157,32 +157,7 @@ int parse_immediate(char* instr){
     return -1;              //indicates no go
 }
 
-/*
-//sub_parse_Imm_I takes a char* arg, the instruction
-//entered by the user, and parses ? digits depending on 
-//what instruction type it is and calculates the decimal value
-//Called by: parse_immiate
-//Argument: char* instr, 
-//Returns: int represents the immediate decimal value
-*/
 
-int sub_parse_Imm_I(char* instr) {
-    int im_start = 20;
-    int bin_bit_value = 1;
-    int imm_deci_value = 0;
-
-    for (int i = im_start; i < instrSz; i++) { //want the decimal & hex values
-        //calculate the binary
-        if(instr[instrSz - i - 1] == '0') {
-            bin_bit_value = bin_bit_value * 2;
-        }
-        else {
-            imm_deci_value = imm_deci_value + bin_bit_value;
-            bin_bit_value = bin_bit_value * 2;
-        }
-    }
-    return imm_deci_value;
-}
 
 /*
 //sub_parse_Imm takes a char* & 2 ints, the instruction
@@ -194,7 +169,7 @@ int sub_parse_Imm_I(char* instr) {
 //Returns: int represents the immediate decimal value
 */
 
-int sub_parse_Imm(char* instr, int start, int end) {    //most of the time end is instrSz
+int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time end is instrSz
     //int im_start = 20;
     int bin_bit_value = 1;
     int imm_deci_value = 0;
@@ -225,7 +200,7 @@ int sub_parse_Imm(char* instr, int start, int end) {    //most of the time end i
 //Argument: char* instr, int start, int end
 //Returns: int represents the immediate decimal value
 *///**********************************************************
-int twosComp(char* instr, int start, int end) {
+int twosComp(const char* instr, int start, int end) {
     //int b = end - start;
     //printf("%d The size of ones&twos comp: \n", b);
     char onesComp[end - start];
@@ -269,7 +244,96 @@ int twosComp(char* instr, int start, int end) {
 //based on instruction type and just have this function read them and return the proper
 //int to be printed
 //******************************************
-int parse_register(char* instr){
-    
- 
+void parse_register(const char* instr){
+    char op = parse_instructions(instr);
+
+    //all have register rd
+    if(op == 'R' || op == 'U' || op == 'I') {
+        int rd = sub_parse_reg_rd(instr);
+        printf("Rd: x%i \n", rd);
+
+        //only R and I have both RD and RS1
+        if(op == 'R' || op == 'I') {
+            int rs1 = sub_parse_reg_rs1(instr);
+            printf("Rs1: x%i \n", rs1);
+
+            //only R has RD, RS1 and RS2
+            if(op == 'R'){
+                int rs2 = sub_parse_reg_rs2(instr);
+                printf("Rs2: x%i \n", rs2);
+            }
+        }
+    }
+    //only have rs 1 and rs 2
+    else if(op == 'S' || op == 'B') {
+        int rs1 = sub_parse_reg_rs1(instr);
+        printf("Rs1: x%i \n", rs1);
+        int rs2 = sub_parse_reg_rs2(instr);
+        printf("Rs2: x%i \n", rs2);
+    }
+    else{
+        printf("ERROR: INVALID INSTRUCTION INPUT \n");
+    }
+
+}
+
+
+int sub_parse_reg_rd(const char* instr) {
+    int rd_start = 7;
+    int rd_end = 11;
+    int bin_bit_value = 1;
+    int rd_deci_value = 0;
+
+    for (int i = rd_start; i < rd_end; i++) { //want the decimal & hex values
+        //calculate the binary
+        if(instr[rd_end - i - 1] == '0') {
+            bin_bit_value = bin_bit_value * 2;
+        }
+        else {
+            rd_deci_value = rd_deci_value + bin_bit_value;
+            bin_bit_value = bin_bit_value * 2;
+        }
+    }
+    return rd_deci_value;
+}
+
+
+
+int sub_parse_reg_rs1(const char* instr){
+    int rs1_start = 15;
+    int rs1_end = 19;
+    int bin_bit_value = 1;
+    int rs1_deci_value = 0;
+
+    for (int i = rs1_start; i < rs1_end; i++) { //want the decimal & hex values
+        //calculate the binary
+        if(instr[rs1_end - i - 1] == '0') {
+            bin_bit_value = bin_bit_value * 2;
+        }
+        else {
+            rs1_deci_value = rs1_deci_value + bin_bit_value;
+            bin_bit_value = bin_bit_value * 2;
+        }
+    }
+    return rs1_deci_value;
+}
+
+
+int sub_parse_reg_rs2(const char* instr){
+    int rs2_start = 20;
+    int rs2_end = 24;
+    int bin_bit_value = 1;
+    int rs2_deci_value = 0;
+
+    for (int i = rs2_start; i < rs2_end; i++) { //want the decimal & hex values
+        //calculate the binary
+        if(instr[rs2_end - i - 1] == '0') {
+            bin_bit_value = bin_bit_value * 2;
+        }
+        else {
+            rs2_deci_value = rs2_deci_value + bin_bit_value;
+            bin_bit_value = bin_bit_value * 2;
+        }
+    }
+    return rs2_deci_value;
 }

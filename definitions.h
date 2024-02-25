@@ -11,13 +11,15 @@ const int ImmSz2 = 16;
 const char* opCodeLU[] = {"0110011", "0010011", "0000011", "1100111", "0100011", "1100011", "1101111"};
 const char* f3LU[] = {"000", "001", "010", "011", "100", "101", "110", "111"};
 //function definitions
-void print_instructions(char*); //main function will call subfunctions KP
-char parse_instructions(char*); //find the opcode, returns instruct type KP
-int parse_funct3(char*);
-int parse_funct7(char*);
-int parse_immediate(char*);
-int parse_register(char*);
-int sub_parse_Imm(char*, int, int);
-int twosComp(char*, int, int);
-int sub_parse_Imm_I(char*);
-int sub_parse_Imm_S(char*);
+void print_instructions(const char*); //main function will call subfunctions KP
+char parse_instructions(const char*); //find the opcode, returns instruct type KP
+int parse_funct3(const char*);
+int parse_funct7(const char*);
+int parse_immediate(const char*);
+void parse_register(const char*);
+int sub_parse_Imm(const char*, int, int);
+int twosComp(const char*, int, int);
+int sub_parse_reg_rd(const char* instr);
+int sub_parse_reg_rs1(const char* instr);
+int sub_parse_reg_rs2(const char* instr);
+int sub_parse_Imm_S(const char*);
