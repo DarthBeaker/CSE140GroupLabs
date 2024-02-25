@@ -176,7 +176,7 @@ int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time
 
     for (int i = start; i < end; i++) { //want the decimal & hex values
         //calculate the binary
-        if(instr[i] == '0') {
+        if(instr[instrSz - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
         }
         else {
@@ -286,7 +286,7 @@ int sub_parse_reg_rd(const char* instr) {
 
     for (int i = rd_start; i < rd_end; i++) { //want the decimal & hex values
         //calculate the binary
-        if(instr[rd_end - i - 1] == '0') {
+        if(instr[instrSz - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
         }
         else {
@@ -307,7 +307,7 @@ int sub_parse_reg_rs1(const char* instr){
 
     for (int i = rs1_start; i < rs1_end; i++) { //want the decimal & hex values
         //calculate the binary
-        if(instr[rs1_end - i - 1] == '0') {
+        if(instr[instrSz - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
         }
         else {
@@ -327,7 +327,7 @@ int sub_parse_reg_rs2(const char* instr){
 
     for (int i = rs2_start; i < rs2_end; i++) { //want the decimal & hex values
         //calculate the binary
-        if(instr[rs2_end - i - 1] == '0') {
+        if(instr[instrSz - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
         }
         else {
