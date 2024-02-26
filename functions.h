@@ -340,3 +340,11 @@ int sub_parse_reg_rs2(const char* instr){
     }
     return rs2_deci_value;
 }
+/******************************************
+//parse_register will take a char arg and then
+//read the register value and return the int associated with the c-string of binary
+//might want to also pass what specific register we're trying to read if passing the
+//full instruction or we could in the main function break it up into registers
+//based on instruction type and just have this function read them and return the proper
+//int to be printed
+/****************************************/
