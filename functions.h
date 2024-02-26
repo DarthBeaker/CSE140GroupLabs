@@ -184,8 +184,11 @@ int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time
             bin_bit_value = bin_bit_value * 2;
         }
     }
+    printf("%d\n", imm_deci_value);
+
     //check if it is negative, if so convert
     if (imm_deci_value > 15) {
+        printf("%s\n", "Calling twosComp");
         imm_deci_value = twosComp(instr, start, end);
     }
     return imm_deci_value;
@@ -203,8 +206,8 @@ int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time
 int twosComp(const char* instr, int start, int end) {
     //int b = end - start;
     //printf("%d The size of ones&twos comp: \n", b);
-    char onesComp[end - start];
-    char twosComp[end - start];
+    char onesComp[end - start + 1];
+    char twosComp[end - start + 1];
     int carryBit = 1;
     int j = 0;
 
@@ -217,8 +220,8 @@ int twosComp(const char* instr, int start, int end) {
         }
         j++;
     }
-    //onesComp[end-start] = '\0';
-    for (int k = end - start; k > 0; k--) {
+    onesComp[end - start] = '\0';
+    for (int k = end - start ; k > 0; k--) {
         if(onesComp[k] == '1' && carryBit == 1) {
             twosComp[k] = '0';
         }
@@ -230,7 +233,7 @@ int twosComp(const char* instr, int start, int end) {
             twosComp[k] = onesComp[k];
         }
     }
-    //twosComp[end-start] = '\0';
+    twosComp[end-start] = '\0';
 
     printf("%s\n", twosComp);
     return 0; //will convert to a decimal next, want to see if it works so far...
