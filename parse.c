@@ -16,7 +16,8 @@ void main() {
     //printf("%s\n", instr);
 
     //call parse_instruction print return symbol for now.
-    printf("Instruction Type: %c\n",parse_instructions(instr));
+    char instruct_type = parse_instructions(instr);
+    printf("Instruction Type: %c\n", instruct_type);
 
 
     //since instructions can have multiple
@@ -26,9 +27,14 @@ void main() {
 
 
     //call parse_funct3 and print the decimal value of it for now.
-    printf("Funct3: %i\n", parse_funct3(instr));
+    if(instruct_type != 'U'){
+        printf("Funct3: %i\n", parse_funct3(instr));
+    }
     
-    printf("Funct7: %i\n", parse_funct7(instr));
-
-    printf("Immediate: %i\n", parse_immediate(instr));
+    if(instruct_type == 'R'){
+        printf("Funct7: %i\n", parse_funct7(instr));
+    }
+    else{
+        printf("Immediate: %i\n", parse_immediate(instr));
+    }
 }

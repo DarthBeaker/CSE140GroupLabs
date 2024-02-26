@@ -107,7 +107,7 @@ int parse_funct7(const char* instr){
     const int funct7_start = 25;
     int funct7_dec_val = 0;
     int binary_bit_value = 1;
-    for(int i = funct7_start; i < instrSz; i++){
+    for(int i = funct7_start; i <= instrSz; i++){
         if(instr[instrSz - i - 1] == '0'){
             binary_bit_value *= 2;
         }else{
@@ -174,7 +174,7 @@ int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time
     int bin_bit_value = 1;
     int imm_deci_value = 0;
 
-    for (int i = start; i < end; i++) { //want the decimal & hex values
+    for (int i = start; i <= end; i++) { //want the decimal & hex values
         //calculate the binary
         if(instr[instrSz - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
@@ -287,7 +287,7 @@ int sub_parse_reg_rd(const char* instr) {
     int bin_bit_value = 1;
     int rd_deci_value = 0;
 
-    for (int i = rd_start; i < rd_end; i++) { //want the decimal & hex values
+    for (int i = rd_start; i <= rd_end; i++) { //want the decimal & hex values
         //calculate the binary
         if(instr[instrSz - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
@@ -308,7 +308,7 @@ int sub_parse_reg_rs1(const char* instr){
     int bin_bit_value = 1;
     int rs1_deci_value = 0;
 
-    for (int i = rs1_start; i < rs1_end; i++) { //want the decimal & hex values
+    for (int i = rs1_start; i <= rs1_end; i++) { //want the decimal & hex values
         //calculate the binary
         if(instr[instrSz - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
@@ -328,7 +328,7 @@ int sub_parse_reg_rs2(const char* instr){
     int bin_bit_value = 1;
     int rs2_deci_value = 0;
 
-    for (int i = rs2_start; i < rs2_end; i++) { //want the decimal & hex values
+    for (int i = rs2_start; i <= rs2_end; i++) { //want the decimal & hex values
         //calculate the binary
         if(instr[instrSz - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
