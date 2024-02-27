@@ -197,7 +197,7 @@ int sub_parse_Imm(const char* instr, int start, int end ) {    //most of the tim
     int bin_bit_value = 1;
     int imm_deci_value = 0;
 
-    for (int i = start; i <= end; i++) { //want the decimal & hex values
+    for (int i = start; i < end; i++) { //want the decimal & hex values
         //calculate the binary
         if(instr[end - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
