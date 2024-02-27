@@ -297,7 +297,6 @@ void parse_register(const char* instr){
     //all have register rd
     if(op == 'R' || op == 'J' || op == 'I') {
         int rd = sub_parse_reg_rd(instr);
-        printf("Rd: x%i \n", rd);
 
         //only R and I have both RD and RS1
         if(op == 'R' || op == 'I') {
@@ -310,6 +309,8 @@ void parse_register(const char* instr){
                 printf("Rs2: x%i \n", rs2);
             }
         }
+
+        printf("Rd: x%i \n", rd);
     }
     //only have rs 1 and rs 2
     else if(op == 'S' || op == 'B') {
