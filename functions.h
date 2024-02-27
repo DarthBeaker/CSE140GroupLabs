@@ -138,19 +138,43 @@ int parse_immediate(const char* instr){
     }
     else if(op == 'I') {
         val = sub_parse_Imm(instr,20, instrSz);
-        //printf("%i Immediate: \n", val);
-        //printf("%x Imm in hex: ", val);      //for testing, should be in print
         return val;
     }
     else if(op == 'S') {
-        val = sub_parse_Imm(instr, 25, instrSz) + sub_parse_Imm(instr, 7, 11);
+        //read immedates 
+        char imme[] = "000000000000";
+        int j = 0;
+        for(int i = 25; i < instrSz; i++) {
+            imme[j] = instr[instrSz - i - 1];
+            j++;
+        }
+        for (int i = 20; i <= 24; i++) {
+            imme[j] = instr[i];
+            j++;
+        }
+        printf("%s\n", imme);
+        val = sub_parse_Imm(imme, 0, 12);
+        //printf("%d\n", val);
+
         if(val > 2048) {
+<<<<<<< Updated upstream
             //twosComp
+=======
+            val = twosComp(val);
+            //printf("%d\n", val);
+>>>>>>> Stashed changes
         }
         return val;
     }
     else if(op == 'B') {
-        //consider lumping with S... JLP
+        j = 2;
+        imme = "000000000000";
+        imme[0] = instr[31];
+        imme[1] = instr[7]
+        for(int i = 25; i < 30; i++) {
+            imme[j] = instr[30 - i - 1];
+            j++;
+        }
     }
     else if(op == 'U') {
         //call function parse_Imm_U(instr);
@@ -179,7 +203,7 @@ int sub_parse_Imm(const char* instr, int start, int end ) {    //most of the tim
 
     for (int i = start; i <= end; i++) { //want the decimal & hex values
         //calculate the binary
-        if(instr[instrSz - i - 1] == '0') {
+        if(instr[end - i - 1] == '0') {
             bin_bit_value = bin_bit_value * 2;
         }
         else {
@@ -187,6 +211,7 @@ int sub_parse_Imm(const char* instr, int start, int end ) {    //most of the tim
             bin_bit_value = bin_bit_value * 2;
         }
     }
+<<<<<<< Updated upstream
     //printf("%d\n", imm_deci_value);
 
     //check if it is negative, if so convert
@@ -194,8 +219,11 @@ int sub_parse_Imm(const char* instr, int start, int end ) {    //most of the tim
         printf("%s\n", "Calling twosComp");
         imm_deci_value = twosComp(instr, start, end);
     }
+=======
+>>>>>>> Stashed changes
     return imm_deci_value;
 }
+
 
 /************************************************************
 //twoComp takes a char* & 2 ints, the instruction
@@ -206,16 +234,31 @@ int sub_parse_Imm(const char* instr, int start, int end ) {    //most of the tim
 //Argument: char* instr, int start, int end
 //Returns: int represents the immediate decimal value
 *///**********************************************************
-int twosComp(const char* instr, int start, int end) {
-    //int b = end - start;
-    //printf("%d The size of ones&twos comp: \n", b);
-    char onesComp[end - start + 1];
-    char twosComp[end - start + 1];
+int twosComp(int num) {
+    int value = 0;
+    char onesComp[] = "000000000000";
+    char twosComp[] = "000000000000";
     int carryBit = 1;
     int j = 0;
-
-    for (int i = start; i < end; i++) {
-        if(instr[i] == '0'){
+    int dec = num; 
+    int rem = 0;
+    char bin[] = "000000000000";
+    int imm_deci_value = 0;
+    int bin_bit_value = 1;
+    //convert the decimal to binary
+    for(int i = 11; dec != 0; i--) {
+        rem = dec % 2; 
+        dec /= 2;
+        if(rem == 0){
+            bin[i] = '0';
+        }
+        else {
+            bin[i] = '1';
+        }
+    }
+    //flip bits
+    for (int i = 0; i < 12; i++) {
+        if(bin[i] == '0'){
             onesComp[j] = '1';
         }
         else {
@@ -223,8 +266,8 @@ int twosComp(const char* instr, int start, int end) {
         }
         j++;
     }
-    onesComp[end - start] = '\0';
-    for (int k = end - start ; k > 0; k--) {
+    
+    for (int k = 11; k >= 0; k--) {
         if(onesComp[k] == '1' && carryBit == 1) {
             twosComp[k] = '0';
         }
@@ -236,11 +279,22 @@ int twosComp(const char* instr, int start, int end) {
             twosComp[k] = onesComp[k];
         }
     }
-    twosComp[end-start] = '\0';
-
+    printf("%s", "Twos Comp: ");
     printf("%s\n", twosComp);
-    return 0; //will convert to a decimal next, want to see if it works so far...
+
+    for(int i = 0; i < 12; i++) {
+         if(twosComp[12 - i - 1] == '0') {
+            bin_bit_value = bin_bit_value * 2;
+        }
+        else{
+            imm_deci_value = imm_deci_value + bin_bit_value; 
+            bin_bit_value = bin_bit_value * 2; 
+        }
+    }
+
+    return -imm_deci_value;
 }
+
 
 //******************************************
 //parse_register will take a char arg and then
