@@ -166,12 +166,24 @@ int parse_immediate(const char* instr){
     else if(op == 'B') {
         j = 2;
        // imme[] = "000000000000";
-        imme[0] = instr[31];
-        imme[1] = instr[7];
-        for(int i = 25; i < 30; i++) {
-            imme[j] = instr[30 - i - 1];
+        imme[12] = instr[31];
+        imme[11] = instr[7];
+        for(int i = 30; i > 25; i--) {
+            imme[j] = instr[i];
             j++;
         }
+        for(int k = 11; k < 7; k--){
+            imme[j] = instr[k];
+            j++;
+        }
+        printf("%s\n", imme);
+        val = sub_parse_Imm(imme, 0, 12);
+
+        if(val > 2048) {
+            val = twosComp(val);
+            //printf("%d\n", val);
+        }
+
     }
     else if(op == 'U') {
         //call function parse_Imm_U(instr);

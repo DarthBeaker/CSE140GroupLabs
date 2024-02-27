@@ -202,7 +202,6 @@ int parse_immediate(const char* instr){
     char op = parse_instructions(instr);
     int val = 0;
     
-    
     if(op == 'R') {
         return -1;                  //indicates no immediate used JLP
     }
@@ -263,7 +262,7 @@ int parse_immediate(const char* instr){
 */
 
 int sub_parse_Imm(const char* instr, int start, int end ) {    //most of the time end is instrSz
-    //int im_start = 20;
+    //int im_start = 20; fall back to check for S error JLP
     int bin_bit_value = 1;
     int imm_deci_value = 0;
 

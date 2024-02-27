@@ -14,13 +14,4 @@ void main() {
 
     print_instructions(instr);
 
-    
-    if(instruct_type == 'R'){
-        printf("Funct7: %i\n", parse_funct7(instr));
-    }
-    else{
-        printf("Immediate: %i\n", parse_immediate(instr));
-    }
-    print_all(instr);
-
 }
