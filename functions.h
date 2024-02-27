@@ -143,7 +143,10 @@ int parse_immediate(const char* instr){
         return val;
     }
     else if(op == 'S') {
-         val = sub_parse_Imm(instr, 25, instrSz) + sub_parse_Imm(instr, 7, 11);
+        val = sub_parse_Imm(instr, 25, instrSz) + sub_parse_Imm(instr, 7, 11);
+        if(val > 2048) {
+            twosComp
+        }
         return val;
     }
     else if(op == 'B') {
@@ -184,13 +187,13 @@ int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time
             bin_bit_value = bin_bit_value * 2;
         }
     }
-    printf("%d\n", imm_deci_value);
+    //printf("%d\n", imm_deci_value);
 
     //check if it is negative, if so convert
-    if (imm_deci_value > 15) {
-        printf("%s\n", "Calling twosComp");
-        imm_deci_value = twosComp(instr, start, end);
-    }
+    // if (imm_deci_value > 15) {
+    //     printf("%s\n", "Calling twosComp");
+    //     imm_deci_value = twosComp(instr, start, end);
+    // }
     return imm_deci_value;
 }
 
@@ -341,10 +344,19 @@ int sub_parse_reg_rs2(const char* instr){
     return rs2_deci_value;
 }
 /******************************************
-//parse_register will take a char arg and then
-//read the register value and return the int associated with the c-string of binary
+//print_all will take 1 arg  and return nothing
+//Its sole job is to print all the fields correctly.
 //might want to also pass what specific register we're trying to read if passing the
 //full instruction or we could in the main function break it up into registers
 //based on instruction type and just have this function read them and return the proper
 //int to be printed
 /****************************************/
+
+void print_all(const char* instr){
+    char instr_type = parse_instructions(instr);
+    printf("%s", "Instruction Type: ");
+    printf("%c\n", instr_type);
+    printf("%s", "Operation: ");
+    printf("%s\n", "placeholder");
+    parse_register(instr);
+}
