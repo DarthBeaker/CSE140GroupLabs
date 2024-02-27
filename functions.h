@@ -107,7 +107,7 @@ int parse_funct7(const char* instr){
     const int funct7_start = 25;
     int funct7_dec_val = 0;
     int binary_bit_value = 1;
-    for(int i = funct7_start; i <= instrSz; i++){
+    for(int i = funct7_start; i < instrSz; i++){
         if(instr[instrSz - i - 1] == '0'){
             binary_bit_value *= 2;
         }else{
@@ -132,7 +132,7 @@ int parse_immediate(const char* instr){
     char op = parse_instructions(instr);
     int val = 0;
     
-
+    
     if(op == 'R') {
         return -1;                  //indicates no immediate used JLP
     }
@@ -145,7 +145,7 @@ int parse_immediate(const char* instr){
     else if(op == 'S') {
         val = sub_parse_Imm(instr, 25, instrSz) + sub_parse_Imm(instr, 7, 11);
         if(val > 2048) {
-            twosComp
+            //twosComp
         }
         return val;
     }
@@ -172,7 +172,7 @@ int parse_immediate(const char* instr){
 //Returns: int represents the immediate decimal value
 */
 
-int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time end is instrSz
+int sub_parse_Imm(const char* instr, int start, int end ) {    //most of the time end is instrSz
     //int im_start = 20;
     int bin_bit_value = 1;
     int imm_deci_value = 0;
@@ -190,10 +190,10 @@ int sub_parse_Imm(const char* instr, int start, int end) {    //most of the time
     //printf("%d\n", imm_deci_value);
 
     //check if it is negative, if so convert
-    // if (imm_deci_value > 15) {
-    //     printf("%s\n", "Calling twosComp");
-    //     imm_deci_value = twosComp(instr, start, end);
-    // }
+    if (imm_deci_value > 15) {
+        printf("%s\n", "Calling twosComp");
+        imm_deci_value = twosComp(instr, start, end);
+    }
     return imm_deci_value;
 }
 
@@ -254,7 +254,7 @@ void parse_register(const char* instr){
     char op = parse_instructions(instr);
 
     //all have register rd
-    if(op == 'R' || op == 'U' || op == 'I') {
+    if(op == 'R' || op == 'J' || op == 'I') {
         int rd = sub_parse_reg_rd(instr);
         printf("Rd: x%i \n", rd);
 
@@ -343,20 +343,211 @@ int sub_parse_reg_rs2(const char* instr){
     }
     return rs2_deci_value;
 }
+
 /******************************************
-//print_all will take 1 arg  and return nothing
+//print_instructions will take 1 arg  and return nothing
 //Its sole job is to print all the fields correctly.
 //might want to also pass what specific register we're trying to read if passing the
 //full instruction or we could in the main function break it up into registers
 //based on instruction type and just have this function read them and return the proper
 //int to be printed
-/****************************************/
 
-void print_all(const char* instr){
+//R Type
+add sub -- done
+sll slt sltu -- done
+xor --done
+sra srl --done
+or and  --done
+
+//I Type
+lb lh lw --done
+addi slli slti sltiu xori srli srai ori andi
+jalr 
+
+
+
+//S Type
+sb sh sw --done
+
+//SB Type
+beq bge blt bne
+
+//UJ Type
+jal -- done
+/****************************************/
+void print_instructions(const char* instr){
     char instr_type = parse_instructions(instr);
+    int funct3 = parse_funct3(instr);
+    int funct7 = parse_funct7(instr);
+    //for the instructions given only I has different opcodes
+    //so I must get the opcode so I can search through each one for the right codes
+    int op_start = 0;
+    int op_end = 7;
+    int bin_bit_value = 1;
+    int opcode = 0;
+    for (int i = op_start; i < op_end; i++) {
+        if(instr[instrSz - i - 1] == '0') {
+            bin_bit_value *= 2;
+        }
+        else {
+            opcode += bin_bit_value;
+            bin_bit_value *= 2;
+        }
+    }
+
     printf("%s", "Instruction Type: ");
-    printf("%c\n", instr_type);
+    if(instr_type != 'B' && instr_type != 'J'){
+        printf("%c\n", instr_type);
+    }
+    else if(instr_type == 'J'){
+        printf("UJ");
+    }
+    else{
+        printf("SB"); //instruction type stored as char we shortened SB -> B internally and we can't just print B so we must print SB instead
+    }
     printf("%s", "Operation: ");
-    printf("%s\n", "placeholder");
+
+    switch(instr_type){
+        case 'R':
+            switch(funct3){
+                case 0:
+                    //funct7 is only 0 or 32 I believe
+                    if(funct7 == 0){
+                        printf("add \n");
+                    }
+                    else{
+                        printf("sub \n");
+                    }
+                    break;
+                case 1:
+                    printf("sll \n");
+                    break;
+                case 2:
+                    printf("slt \n");
+                    break;
+                case 3:
+                    printf("sltu \n");
+                    break;
+                case 4:
+                    printf("xor \n");
+                    break;
+                case 5:
+                    //funct7 is only 0 or 32 I believe
+                    if(funct7 == 0){
+                        printf("srl \n");
+                    }
+                    else{
+                        printf("sra \n");
+                    }
+                    break;
+                case 6:
+                    printf("or \n");
+                    break;
+                case 7:
+                    printf("and \n");
+                    break;  
+            }
+            break;
+        case 'I':
+            //printf("opcode: %i", opcode);
+            switch(opcode){
+                case 3:
+                    switch(funct3){
+                        case 0:
+                            printf("lb \n");
+                            break;
+                        case 1:
+                            printf("lh \n");
+                            break;
+                        case 2:
+                            printf("lw \n");
+                            break;
+                    }
+                    break;
+                case 19:
+                    switch(funct3){
+                        case 0:
+                            printf("addi \n");
+                            break;
+                        case 1:
+                            printf("slli \n");
+                            break;
+                        case 2:
+                            printf("slti \n");
+                            break;
+                        case 3:
+                            printf("sltiu \n");
+                            break;
+                        case 4:
+                            printf("xori \n");
+                            break;
+                        case 5:
+                            if(funct7 == 0){
+                                printf("srli \n");
+                            }
+                            else{
+                                printf("srai \n");
+                            }
+                            break;
+                        case 6:
+                            printf("ori \n");
+                            break;
+                        case 7:
+                            printf("andi \n");
+                            break;
+                    }
+                    break;
+                case 103:
+                    // can only be jalr
+                    printf("jalr \n");
+                    break;
+            }
+            break;
+        case 'S':
+            switch(funct3){
+                case 0:
+                    printf("sb \n");
+                    break;
+                case 1:
+                    printf("sh \n");
+                    break;
+                case 2:
+                    printf("sw \n");
+                    break;
+            }
+            break;
+        case 'B':
+            switch(funct3){
+                case 0:
+                    printf("beq \n");
+                    break;
+                case 1:
+                    printf("bne \n");
+                    break;
+                case 4:
+                    printf("blt \n");
+                    break;
+                case 5:
+                    printf("bge \n");
+                    break;
+            }
+            break;
+        case 'J': //only 1 UJ statment so just print what it is
+            printf("jal \n");
+            break;
+        default:
+            printf("ERROR: INVALID INSTRUCTION \n");
+    }
     parse_register(instr);
+    //call parse_funct3 and print the decimal value of it for now.
+    if(instr_type != 'J'){
+        printf("Funct3: %i\n", funct3);
+    }
+    
+    if(instr_type == 'R'){
+        printf("Funct7: %i\n", funct7);
+    }
+    else{
+        printf("Immediate: %i\n", parse_immediate(instr));
+    }
 }
