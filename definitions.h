@@ -22,8 +22,4 @@ int twosComp(int);
 int sub_parse_reg_rd(const char* instr);
 int sub_parse_reg_rs1(const char* instr);
 int sub_parse_reg_rs2(const char* instr);
-<<<<<<< Updated upstream
 int sub_parse_Imm_S(const char*);
-=======
-void print_all(const char*);
->>>>>>> Stashed changes

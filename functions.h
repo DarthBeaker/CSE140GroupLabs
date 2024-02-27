@@ -157,20 +157,16 @@ int parse_immediate(const char* instr){
         //printf("%d\n", val);
 
         if(val > 2048) {
-<<<<<<< Updated upstream
-            //twosComp
-=======
             val = twosComp(val);
             //printf("%d\n", val);
->>>>>>> Stashed changes
         }
         return val;
     }
     else if(op == 'B') {
-        j = 2;
-        imme = "000000000000";
+        int j = 2;
+        char imme[] = "000000000000";
         imme[0] = instr[31];
-        imme[1] = instr[7]
+        imme[1] = instr[7];
         for(int i = 25; i < 30; i++) {
             imme[j] = instr[30 - i - 1];
             j++;
@@ -211,16 +207,6 @@ int sub_parse_Imm(const char* instr, int start, int end ) {    //most of the tim
             bin_bit_value = bin_bit_value * 2;
         }
     }
-<<<<<<< Updated upstream
-    //printf("%d\n", imm_deci_value);
-
-    //check if it is negative, if so convert
-    if (imm_deci_value > 15) {
-        printf("%s\n", "Calling twosComp");
-        imm_deci_value = twosComp(instr, start, end);
-    }
-=======
->>>>>>> Stashed changes
     return imm_deci_value;
 }
 
