@@ -197,9 +197,28 @@ int parse_immediate(const char* instr){
         return (val * 2); 
 
     }
-    else if(op == 'U') {
+    else if(op == 'J') {
         //call function parse_Imm_U(instr);
         //covers U & UJ
+        int j = 0;
+        imme[j] = instr[0];
+        j++;
+        for(int i = 12; i < 19; i++) {
+            imme[j] = instr[i];
+            j++;
+        }
+        //j should be 12
+        imme[j] = instr[11];
+        j++;
+        for(int k = 1; k < 11; k++){
+            imme[j] = instr[k];
+            j++;
+        }
+        imme[len+1] = '\n';
+        printf("%s", imme);
+        val = sub_parse_Imm(imme, 0, 12);
+        val *= 2;
+        return val;
     }
     
     return -1;              //indicates no go
@@ -445,6 +464,7 @@ void print_instructions(const char* instr){
     char instr_type = parse_instructions(instr);
     int funct3 = parse_funct3(instr);
     int funct7 = parse_funct7(instr);
+    int immediate = parse_immediate(instr);
     //for the instructions given only I has different opcodes
     //so I must get the opcode so I can search through each one for the right codes
     int op_start = 0;
@@ -614,6 +634,6 @@ void print_instructions(const char* instr){
         printf("Funct7: %i\n", funct7);
     }
     else{
-        printf("Immediate: %i\n", parse_immediate(instr));
+        printf("Immediate: %i (or 0X%X)\n", immediate, immediate);
     }
 }
