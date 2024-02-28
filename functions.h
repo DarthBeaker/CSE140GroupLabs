@@ -186,7 +186,6 @@ int parse_immediate(const char* instr){
             imme[j] = instr[k];
             j++;
         }
-
         val = sub_parse_Imm(imme, 0, 12);
         free(imme);
 
@@ -203,7 +202,7 @@ int parse_immediate(const char* instr){
         int j = 0;
         imme[j] = instr[0];
         j++;
-        for(int i = 12; i < 19; i++) {
+        for(int i = 12; i <= 19; i++) {
             imme[j] = instr[i];
             j++;
         }
@@ -214,10 +213,11 @@ int parse_immediate(const char* instr){
             imme[j] = instr[k];
             j++;
         }
-        imme[len+1] = '\n';
-        printf("%s", imme);
+        //printf("j: %i, Imme: %s \n", j, imme);
         val = sub_parse_Imm(imme, 0, 20);
         val *= 2;
+
+
         return val;
     }
     
