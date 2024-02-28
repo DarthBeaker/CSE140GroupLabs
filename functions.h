@@ -132,6 +132,7 @@ int parse_immediate(const char* instr){
     char op = parse_instructions(instr);
     int val = 0;
     char imme[] = "000000000000";
+    //char imme2[] = "000000000000";
     int j = 0;
     
     
@@ -165,24 +166,24 @@ int parse_immediate(const char* instr){
     }
     else if(op == 'B') {
         j = 2;
-       // imme[] = "000000000000";
-        imme[12] = instr[31];
-        imme[11] = instr[7];
-        for(int i = 30; i > 25; i--) {
+        imme[0] = instr[0];
+        imme[1] = instr[24];
+        for(int i = 1; i < 7; i++) {
             imme[j] = instr[i];
             j++;
         }
-        for(int k = 11; k < 7; k--){
+        for(int k = 20; k < 24; k++){
             imme[j] = instr[k];
             j++;
         }
-        printf("%s\n", imme);
+
         val = sub_parse_Imm(imme, 0, 12);
 
         if(val > 2048) {
             val = twosComp(val);
-            //printf("%d\n", val);
         }
+
+        return (val * 2); 
 
     }
     else if(op == 'U') {
@@ -265,7 +266,7 @@ int twosComp(int num) {
         }
         j++;
     }
-    
+    //two's complement
     for (int k = 11; k >= 0; k--) {
         if(onesComp[k] == '1' && carryBit == 1) {
             twosComp[k] = '0';
@@ -454,10 +455,10 @@ void print_instructions(const char* instr){
         printf("%c\n", instr_type);
     }
     else if(instr_type == 'J'){
-        printf("UJ");
+        printf("UJ\n");
     }
     else{
-        printf("SB"); //instruction type stored as char we shortened SB -> B internally and we can't just print B so we must print SB instead
+        printf("SB\n"); //instruction type stored as char we shortened SB -> B internally and we can't just print B so we must print SB instead
     }
     printf("%s", "Operation: ");
 
