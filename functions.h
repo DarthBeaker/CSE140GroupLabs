@@ -216,7 +216,7 @@ int parse_immediate(const char* instr){
         }
         imme[len+1] = '\n';
         printf("%s", imme);
-        val = sub_parse_Imm(imme, 0, 12);
+        val = sub_parse_Imm(imme, 0, 20);
         val *= 2;
         return val;
     }
