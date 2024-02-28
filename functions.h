@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 //******************************************
 //parse_instructions takes a char* arg, the instruction
@@ -131,9 +132,18 @@ int parse_funct7(const char* instr){
 int parse_immediate(const char* instr){
     char op = parse_instructions(instr);
     int val = 0;
-    char imme[] = "000000000000";
-    //char imme2[] = "000000000000";
+    int len = 0;
+    //char imme[] = "000000000000";
+   
     int j = 0;
+
+    if(op == 'S' || op == 'B') {
+        len = 12;
+    }
+    else {
+        len = 20;
+    }
+    char *imme = malloc(sizeof(char) * (len + 1));
     
     
     if(op == 'R') {
@@ -156,7 +166,7 @@ int parse_immediate(const char* instr){
         }
         printf("%s\n", imme);
         val = sub_parse_Imm(imme, 0, 12);
-        //printf("%d\n", val);
+        free(imme);
 
         if(val > 2048) {
             val = twosComp(val);
@@ -178,6 +188,7 @@ int parse_immediate(const char* instr){
         }
 
         val = sub_parse_Imm(imme, 0, 12);
+        free(imme);
 
         if(val > 2048) {
             val = twosComp(val);
