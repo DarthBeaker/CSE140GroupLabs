@@ -1,5 +1,6 @@
 #include <stdio.h>               
 #include <string.h>  
+#include <stdlib.h>
 //define the field sizes to avoid magic numbers JLP
 const int instrSz = 32;    
 const int opCodeSz = 7; 
@@ -199,8 +200,20 @@ int parse_funct7(const char* instr){
 //Returns: int represents the immediate
 */
 int parse_immediate(const char* instr){
-    char op = parse_instructions(instr);
+      char op = parse_instructions(instr);
     int val = 0;
+    int len = 0;
+    //char imme[] = "000000000000";
+   
+    int j = 0;
+
+    if(op == 'S' || op == 'B') {
+        len = 12;
+    }
+    else {
+        len = 20;
+    }
+    char *imme = malloc(sizeof(char) * (len + 1));
     
     if(op == 'R') {
         return -1;                  //indicates no immediate used JLP
@@ -210,9 +223,8 @@ int parse_immediate(const char* instr){
         return val;
     }
     else if(op == 'S') {
-        //read immedates 
-        char imme[] = "000000000000";
-        int j = 0;
+         //read immedates 
+        
         for(int i = 25; i < instrSz; i++) {
             imme[j] = instr[instrSz - i - 1];
             j++;
@@ -221,9 +233,9 @@ int parse_immediate(const char* instr){
             imme[j] = instr[i];
             j++;
         }
-        printf("%s\n", imme);
+        //printf("%s\n", imme);
         val = sub_parse_Imm(imme, 0, 12);
-        //printf("%d\n", val);
+        free(imme);
 
         if(val > 2048) {
             val = twosComp(val);
@@ -232,18 +244,51 @@ int parse_immediate(const char* instr){
         return val;
     }
     else if(op == 'B') {
-        int j = 2;
-        char imme[] = "000000000000";
-        imme[0] = instr[31];
-        imme[1] = instr[7];
-        for(int i = 25; i < 30; i++) {
-            imme[j] = instr[30 - i - 1];
+        j = 2;
+        imme[0] = instr[0];
+        imme[1] = instr[24];
+        for(int i = 1; i < 7; i++) {
+            imme[j] = instr[i];
             j++;
         }
+        for(int k = 20; k < 24; k++){
+            imme[j] = instr[k];
+            j++;
+        }
+        val = sub_parse_Imm(imme, 0, 12);
+        free(imme);
+
+        if(val > 2048) {
+            val = twosComp(val);
+        }
+
+        return (val * 2); 
     }
-    else if(op == 'U') {
+   else if(op == 'J') {
         //call function parse_Imm_U(instr);
         //covers U & UJ
+        int j = 0;
+        imme[j] = instr[0];
+        j++;
+        for(int i = 12; i <= 19; i++) {
+            imme[j] = instr[i];
+            j++;
+        }
+        //j should be 12
+        imme[j] = instr[11];
+        j++;
+        for(int k = 1; k < 11; k++){
+            imme[j] = instr[k];
+            j++;
+        }
+        //printf("j: %i, Imme: %s \n", j, imme);
+        val = sub_parse_Imm(imme, 0, 20);
+        free(imme);
+
+        val *= 2;
+
+
+        return val;
     }
     
     return -1;              //indicates no go
@@ -334,8 +379,8 @@ int twosComp(int num) {
             twosComp[k] = onesComp[k];
         }
     }
-    printf("%s", "Twos Comp: ");
-    printf("%s\n", twosComp);
+    //printf("%s", "Twos Comp: ");
+    //  printf("%s\n", twosComp);
 
     for(int i = 0; i < 12; i++) {
          if(twosComp[12 - i - 1] == '0') {
@@ -659,5 +704,6 @@ void print_instructions(const char* instr){
     }
     else{
         printf("Immediate: %i\n", parse_immediate(instr));
+        printf("Or(0x%x)\n", parse_immediate(instr));
     }
 }
