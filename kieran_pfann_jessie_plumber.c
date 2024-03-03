@@ -703,7 +703,12 @@ void print_instructions(const char* instr){
         printf("Funct7: %i\n", funct7);
     }
     else{
-        printf("Immediate: %i\n", parse_immediate(instr));
-        printf("Or(0x%x)\n", parse_immediate(instr));
+        printf("Immediate: %i ", parse_immediate(instr));
+        if(instr_type != 'B'){
+            printf("(or 0x%hX)\n", parse_immediate(instr));
+        }
+        else{
+            printf("\n");
+        }
     }
 }
