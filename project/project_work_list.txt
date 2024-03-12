@@ -1,11 +1,11 @@
 *This is a text file!
 
 
-Fetch(): Kiran
+Fetch(): Kiera
 
 Decode(): Jesse
 
-Execute(): Kiran
+Execute(): Kiera
 
 Mem(): Jesse
 
