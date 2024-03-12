@@ -4,14 +4,10 @@ Use C++ make a CPU class to encapsulate the global vars, registers, and function
 Make an entire seperate module for the instuction decoding:
 make sure to include 
 
-<<<<<<< Updated upstream
-Fetch(): Kiera
-=======
-CPU clas will need to be able to access the h files; scope issues?
+CPU class will need to be able to access the h files; scope issues?
 
 Fetch(): Kiera
     read the text file
->>>>>>> Stashed changes
 
 Decode(): Jesse
     will need to take a full 32-bit instruction
