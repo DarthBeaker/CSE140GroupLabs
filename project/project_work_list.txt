@@ -1,12 +1,30 @@
 *This is a text file!
 
+Use C++ make a CPU class to encapsulate the global vars, registers, and functions that act on stuff
+Make an entire seperate module for the instuction decoding:
+make sure to include 
+
+<<<<<<< Updated upstream
+Fetch(): Kiera
+=======
+CPU clas will need to be able to access the h files; scope issues?
 
 Fetch(): Kiera
+    read the text file
+>>>>>>> Stashed changes
 
 Decode(): Jesse
+    will need to take a full 32-bit instruction
+    make the rf needs to be a 'global' class variable
 
 Execute(): Kiera
 
 Mem(): Jesse
+    dmem same treatment as rf
 
-Writeback():
+Writeback(): Kiera
+
+Control_Unit(): Jesse 
+
+Part #2 JAL & JALR need to be recognized (will be part of the Hmk #3 code)
+CNTRL_Unit will need to get some signals about these... from the Hmk 3 stuff
