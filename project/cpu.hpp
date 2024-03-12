@@ -2,9 +2,11 @@
 #define CPU_H
 
 #include <string>
+#include "parse.c"
 
 class Cpu{
 private:
+    //As Defined by the documetion required
     int rf[32] = {0};
     int d_mem[32] = {0};
     int pc;
@@ -20,12 +22,23 @@ private:
     bool mem_to_reg;
     bool mem_write;
 
-    
+    //Our own Varible that we decide we need
+    std::string intruction_fetched;
+    std::string filename;
+
+
+    //required by the class
+    void ControlUnit(std::string opcode);
 
 public:
     Cpu();
     ~Cpu();
 
+    void Fetch(std::string filename_input);
+    void Decode();
+    void Execute();
+    void Mem();
+    void Writeback();
 
 };
 
