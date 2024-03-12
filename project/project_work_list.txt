@@ -1,0 +1,12 @@
+*This is a text file!
+
+
+Fetch(): Kiran
+
+Decode(): Jesse
+
+Execute(): Kiran
+
+Mem(): Jesse
+
+Writeback():
