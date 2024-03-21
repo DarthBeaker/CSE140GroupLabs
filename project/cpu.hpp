@@ -6,12 +6,7 @@
 
 class Cpu{
 private:
-<<<<<<< HEAD
     char rf[32] = {'00000000000000000000000000000000'};
-=======
-    //As Defined by the documetion required
-    int rf[32] = {0};
->>>>>>> 5b063a38320f1f036f4fe2155b66852d89b80490
     int d_mem[32] = {0};
     int pc;
     int next_pc;
@@ -38,16 +33,13 @@ public:
     Cpu();
     ~Cpu();
 
-<<<<<<< HEAD
-    Decode(const char* );
 
-=======
+    void Decode(const char* );
     void Fetch(std::string filename_input);
     void Decode();
     void Execute();
     void Mem();
     void Writeback();
->>>>>>> 5b063a38320f1f036f4fe2155b66852d89b80490
 
 };
 
