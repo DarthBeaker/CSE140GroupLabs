@@ -5,7 +5,7 @@
 
 class Cpu{
 private:
-    int rf[32] = {0};
+    char rf[32] = {'00000000000000000000000000000000'};
     int d_mem[32] = {0};
     int pc;
     int next_pc;
@@ -25,6 +25,8 @@ private:
 public:
     Cpu();
     ~Cpu();
+
+    Decode(const char* );
 
 
 };

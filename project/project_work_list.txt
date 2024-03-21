@@ -9,8 +9,10 @@ CPU class will need to be able to access the h files; scope issues?
 Fetch(): Kiera
     read the text file
 
-Decode(): Jesse
+Decode(const char* instr): Jesse
     will need to take a full 32-bit instruction
+    need to leverage the stuff that is already there... decoding the instruction, but then what?
+
     make the rf needs to be a 'global' class variable
 
 Execute(): Kiera
