@@ -58,3 +58,40 @@ Cpu::Decode(const char* instr) {  //this is the rf call
 
 
 }
+//arg is a 8-bit memory address? No bigger?
+//may need to be a string, since hex is 0 - F
+Cpu::Trans_Hex(std::string hex) {
+    int sum = 0;
+    for(int i = 0; i < 8; i++) {
+        if(isdigit(hex[i])) {
+            if(hex[i] == 'A') {
+                sum += 11;
+            }
+            else if(hex[i] == 'B'){
+                sum += 12;
+            }
+            else if(hex[i] == 'C'){
+                sum += 13;
+            }
+            else if(hex[i] == 'D'){
+                sum += 14;
+            }
+            else if(hex[i] == 'E'){
+                sum += 15;
+            }
+            else if(hex[i] == 'F') {
+                sum += 16;
+            }
+        }
+        else {
+            sum += hex[i];
+        }
+    }
+}
+Cpu::Memory() {
+    //need a function that will take the hex memroy address
+    //and translate it into the array index we want
+
+
+
+}
