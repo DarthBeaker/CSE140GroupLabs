@@ -59,8 +59,9 @@ Cpu::Decode(const char* instr) {  //this is the rf call
 
 }
 //arg is a 8-bit memory address? No bigger?
-//may need to be a string, since hex is 0 - F
-Cpu::Trans_Hex(std::string hex) {
+//using a string, since hex is 0 - F
+// can adjust JLP
+int Cpu::Trans_Hex(std::string hex) {
     int sum = 0;
     for(int i = 0; i < 8; i++) {
         if(isdigit(hex[i])) {
@@ -87,6 +88,8 @@ Cpu::Trans_Hex(std::string hex) {
             sum += hex[i];
         }
     }
+
+    return sum; //could do sum/4, can also be done where returned JLP
 }
 Cpu::Memory() {
     //need a function that will take the hex memroy address
