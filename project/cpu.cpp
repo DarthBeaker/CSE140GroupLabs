@@ -101,7 +101,7 @@ Cpu::Memory() {
 
     addr = addr/4; //may move this to translate JLP
     data = d_mem[addr]; //get the data for Writeback() JLP
+    //do some variables for lw/sw need updating here? JLP
 
-    
 
 }
