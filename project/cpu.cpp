@@ -94,7 +94,14 @@ int Cpu::Trans_Hex(std::string hex) {
 Cpu::Memory() {
     //need a function that will take the hex memroy address
     //and translate it into the array index we want
+    int addr = 0;
+    int data = 0;
 
+    addr = self.Trans_Hex(hex);
 
+    addr = addr/4; //may move this to translate JLP
+    data = d_mem[addr]; //get the data for Writeback() JLP
+
+    
 
 }
