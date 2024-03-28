@@ -103,5 +103,37 @@ Cpu::Memory() {
     data = d_mem[addr]; //get the data for Writeback() JLP
     //do some variables for lw/sw need updating here? JLP
 
+}
 
+Cpu::Control_Unit(int opcode) {     //opcode is 7-bits
+        
+    //if R-type
+    /*
+        RegWrite = true;
+        AluOp = true;
+
+    */
+
+   /*
+        if lw or I type
+        RegWrite = true;
+        AluSrc = true;
+        MemtoReg = true;
+        MemRead = true;
+        ALUOP = true;
+   */
+
+  /*
+        if S-type?
+  */
+
+  /*
+        if SB type
+        Branch = true;
+        ALUOP = true;
+  */
+
+    /*
+        if JAL or J...
+    */
 }
