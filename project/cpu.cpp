@@ -138,4 +138,8 @@ Cpu::Control_Unit(int opcode) {     //opcode is 7-bits
     /*
         if JAL or J...
     */
+
+   // What or when does these get reset?
+   // During the next instruction cycle I imagine
+   
 }
