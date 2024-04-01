@@ -109,30 +109,31 @@ Cpu::Control_Unit(int opcode) {     //opcode is 7-bits
 // this is a test JLP
         
     //if R-type
-    /*
+    if(opcode == 0110011){
         RegWrite = true;
         AluOp = true;
-
-    */
-
-   /*
-        if lw or I type
+    }
+    
+    //if I type or lw... may not need second JLP
+    if(opcode == 0000011 || opcode == 0010011) {
         RegWrite = true;
         AluSrc = true;
         MemtoReg = true;
         MemRead = true;
         ALUOP = true;
-   */
+    } JLP
+   
+    //S-type? JLP
+    if(opcode == 0100011) {
+        //do stuff? JLP
+    }
 
-  /*
-        if S-type?
-  */
-
-  /*
-        if SB type
+    //if SB JLP
+    if(opcode == 1100011) {
         Branch = true;
         ALUOP = true;
-  */
+    }
+
 
     /*
         if JAL or J...
