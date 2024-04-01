@@ -106,6 +106,7 @@ Cpu::Memory() {
 }
 
 Cpu::Control_Unit(int opcode) {     //opcode is 7-bits
+// this is a test JLP
         
     //if R-type
     /*
