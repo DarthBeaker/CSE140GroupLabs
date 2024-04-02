@@ -21,14 +21,14 @@ int Cpu::Read_rf(int ptr) {
 
 }
 
-Cpu::Decode(const char* instr) {  //this is the rf call
+void Cpu::Decode(const char* instr) {  //this is the rf call
     char op;
     int instr, funct_3, funct_7, imme, rd, rs1, rs2;
 
     //will need to call Read_rf and pass to parse...
     //fetch each instruction sequentially 0 - 32
     for(int i = 0; i < 32; i++) {
-        instr = self.Read_rf(i);
+        instr = Read_rf(i);
         op = parse_instructions(instr);
         funct_3 = parse_funct3;
         funct_7 = parse_funct7;
@@ -91,13 +91,14 @@ int Cpu::Trans_Hex(std::string hex) {
 
     return sum; //could do sum/4, can also be done where returned JLP
 }
-Cpu::Memory() {
+
+void Cpu::Mem() {
     //need a function that will take the hex memroy address
     //and translate it into the array index we want
     int addr = 0;
     int data = 0;
 
-    addr = self.Trans_Hex(hex);
+    addr = Trans_Hex(hex);
 
     addr = addr/4; //may move this to translate JLP
     data = d_mem[addr]; //get the data for Writeback() JLP
@@ -105,23 +106,23 @@ Cpu::Memory() {
 
 }
 
-Cpu::Control_Unit(int opcode) {     //opcode is 7-bits
+void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
 // this is a test JLP
         
     //if R-type
     if(opcode == 0110011){
-        RegWrite = true;
-        AluOp = true;
+        reg_write = true;
+        alu_ctrl = true;
     }
     
     //if I type or lw... may not need second JLP
     if(opcode == 0000011 || opcode == 0010011) {
-        RegWrite = true;
-        AluSrc = true;
-        MemtoReg = true;
-        MemRead = true;
-        ALUOP = true;
-    } JLP
+        reg_write = true;
+        alu_src = true;
+        mem_to_reg = true;
+        mem_read = true;
+        alu_ctrl = true;
+    } //JLP
    
     //S-type? JLP
     if(opcode == 0100011) {
@@ -130,8 +131,8 @@ Cpu::Control_Unit(int opcode) {     //opcode is 7-bits
 
     //if SB JLP
     if(opcode == 1100011) {
-        Branch = true;
-        ALUOP = true;
+        branch = true;
+        alu_ctrl = true;
     }
 
 
@@ -142,4 +143,16 @@ Cpu::Control_Unit(int opcode) {     //opcode is 7-bits
    // What or when does these get reset?
    // During the next instruction cycle I imagine
    
+}
+
+
+
+void Cpu::Fetch(std::string filename_input){
+    
+}
+void Cpu::Execute(){
+
+}
+void Cpu::Writeback(){
+
 }

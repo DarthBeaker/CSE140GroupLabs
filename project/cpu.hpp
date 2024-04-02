@@ -6,7 +6,7 @@
 
 class Cpu{
 private:
-    char rf[32] = {'00000000000000000000000000000000'};
+    int rf[32] = {0};
     int d_mem[32] = {0};
     int pc;
     int next_pc;
@@ -27,7 +27,11 @@ private:
 
 
     //required by the class
-    void ControlUnit(std::string opcode);
+    void ControlUnit(int opcode);
+    
+    //our own functions
+    int Trans_Hex(std::string hex);
+    int Read_rf(int ptr);
 
 public:
     Cpu();
