@@ -1,3 +1,4 @@
+#include <fstream>
 #include "cpu.hpp"
 
 
@@ -5,7 +6,8 @@ using namespace std;
 
 
 Cpu::Cpu(){
-
+    pc = 0;
+    total_clock_cycles = 0;
 }
 
 Cpu::~Cpu(){
@@ -21,7 +23,7 @@ int Cpu::Read_rf(int ptr) {
 
 }
 
-void Cpu::Decode(const char* instr) {  //this is the rf call
+void Cpu::Decode(string instr) {  //this is the rf call
     char op;
     int instr, funct_3, funct_7, imme, rd, rs1, rs2;
 
@@ -49,16 +51,16 @@ void Cpu::Decode(const char* instr) {  //this is the rf call
                     rs2 = sub_parse_reg_rs2(instr);
 
                     if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int
-                        alu_ctrl = 0010;
+                        alu_ctrl = "0010";
                     }
                     else if(funct_3 == 000 && funct_7 == 0100000){
-                        alu_ctrl = 0110;
+                        alu_ctrl = "0110";
                     }
                     else if(funct_3 == 111 && funct_7 == 0000000) {
-                        alu_ctrl = 0000;
+                        alu_ctrl = "0000";
                     }
                     else if(funct_3 == 110 && funct_7 == 0000000) {
-                        alu_ctrl = 0001;
+                        alu_ctrl = "0001";
                     }
                 }
             }
@@ -68,10 +70,10 @@ void Cpu::Decode(const char* instr) {  //this is the rf call
             //printf("Rs1: x%i \n", rs1);
             int rs2 = sub_parse_reg_rs2(instr);
             if(op == 'S' && funct_3 == 010) {
-                alu_ctrl = 0010;
+                alu_ctrl = "0010";
             }
             else if(op == 'B' && funct_3 == 000) {
-                alu_ctrl = 0110;
+                alu_ctrl = "0110";
             }
         //printf("Rs2: x%i \n", rs2);
         }
@@ -172,11 +174,58 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
 
 
 void Cpu::Fetch(std::string filename_input){
-    
-}
-void Cpu::Execute(){
 
+    //Updating PC Value
+    if(!branch || !alu_zero){//if not branch
+        pc = next_pc;
+    }
+    // This will be where we also check for jal/jalr
+    // else if(){
+    //    
+    // }
+    else{
+        pc = branch_target;
+    }
+
+    //Fetching Instruction
+    ifstream instruction_file;
+    instruction_file.open(filename_input);
+
+    if(instruction_file.is_open()){
+        //file_position should generate the right line based in the file based off the amount of 
+        //characters on a line and the current pc counter divided by 4 (since it increments by 4 each time 
+        // unless branching but regardless it's multiples of four)
+        // double check this actually works, at the least it should be close
+        int file_position = pc/4 * 33; //each line is 33 characters (32 "bits" and then a \n)
+        instruction_file.seekg(0, file_position);
+
+        //pull instruction
+        getline(instruction_file, intruction_fetched);
+    }
+
+
+    instruction_file.close();
+
+    //After fetching instruction
+    next_pc = pc + 4;
 }
+
+void Cpu::Execute(){
+    //we made ALU_src a private string 
+}
+
+
 void Cpu::Writeback(){
 
+    if(mem_to_reg){
+        //read data read in Mem() by LW
+        
+    }
+    else{
+        //read data from ALU_output and store in register
+    }
+
+
+    //Cycle complete increment total clock cycles
+    total_clock_cycles++;
 }

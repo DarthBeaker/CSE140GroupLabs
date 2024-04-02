@@ -33,12 +33,20 @@ private:
     int Trans_Hex(std::string hex);
     int Read_rf(int ptr);
 
+    //for storing between the stages
+    int read_data_1;
+    int read_data_2;
+    int alu_output;
+    int read_d_mem;
+    int dest_reg;
+
+
 public:
     Cpu();
     ~Cpu();
 
 
-    void Decode(const char* );
+    void Decode(std::string instr);
     void Fetch(std::string filename_input);
     void Decode();
     void Execute();
