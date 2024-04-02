@@ -23,32 +23,38 @@ int Cpu::Read_rf(int ptr) {
 
 }
 
-void Cpu::Decode(string instr) {  //this is the rf call
+void Cpu::Decode() {  //this is the rf call
     char op;
-    int instr, funct_3, funct_7, imme, rd, rs1, rs2;
+    int funct_3, funct_7, imme;
 
     //will need to call Read_rf and pass to parse...
     //fetch each instruction sequentially 0 - 32
     for(int i = 0; i < 32; i++) {
         instr = Read_rf(i);
-        op = parse_instructions(instr);
-        funct_3 = parse_funct3;
-        funct_7 = parse_funct7;
-        imme = parse_immediate(instr);
+        op = parse_instructions(instruction_fetched);
+        funct_3 = parse_funct3(instruction_fetched);
+        funct_7 = parse_funct7(instruction_fetched);
+        imme = parse_immediate(instruction_fetched);
         //borrowed from parse register function that chooses the registers?
+        read_data_1 = sub_parse_reg_rs1(instruction_fetched);
+        read_data_2 = sub_parse_reg_rs2(instruction_fetched);
+
         if(op == 'R' || op == 'J' || op == 'I') {
-            rd = sub_parse_reg_rd(instr);
+            dest_reg = sub_parse_reg_rd(instruction_fetched);
 
-            if(op == 'R' || op == 'I'){
+            if(op == 'R' || op == 'I') {
                 
-                rs1 = sub_parse_reg_rs1(instr);
-                if(op == 'I' && funct_3 == 010) { //lw instruction
+                if(op == 'I') {
+                    read_data_2 = imme;
 
-                    alu_ctrl = 0010;
+                    if((op == 'I' && funct_3 == 010)|| (op = 'I' && funct_3 == 000)) { //lw instru && addi instru
+                    
+                    alu_ctrl = "0010";
+                    
+                    }
                 }
-
-                if(op == 'R') {
-                    rs2 = sub_parse_reg_rs2(instr);
+                
+                else if(op == 'R') {
 
                     if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int
                         alu_ctrl = "0010";
@@ -66,9 +72,7 @@ void Cpu::Decode(string instr) {  //this is the rf call
             }
         }
         else if(op == 'S' || op == 'B') {
-            int rs1 = sub_parse_reg_rs1(instr);
-            //printf("Rs1: x%i \n", rs1);
-            int rs2 = sub_parse_reg_rs2(instr);
+
             if(op == 'S' && funct_3 == 010) {
                 alu_ctrl = "0010";
             }
@@ -122,12 +126,21 @@ void Cpu::Mem() {
     //need a function that will take the hex memroy address
     //and translate it into the array index we want
     int addr = 0;
-    int data = 0;
-
     addr = Trans_Hex(hex);
+    addr = addr/4;
+    
+    if(mem_read == true){
+        //need address to read from; from Exe()
+
+    }
+
+    if(mem_write == true) {
+        //need address to write to from Exe()
+        //need data from which register?
+    }
 
     addr = addr/4; //may move this to translate JLP
-    data = d_mem[addr]; //get the data for Writeback() JLP
+    read_d_mem = d_mem[addr]; //get the data for Writeback() JLP
     //do some variables for lw/sw need updating here? JLP
 
 }
@@ -151,7 +164,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     } //JLP
    
     //S-type? JLP
-    if(opcode == 0100011) {
+    if(opcode == 0100011) { //if store word
         //do stuff? JLP
     }
 
