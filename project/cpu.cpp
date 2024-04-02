@@ -42,6 +42,18 @@ void Cpu::Decode(const char* instr) {  //this is the rf call
                 rs1 = sub_parse_reg_rs1(instr);
                 if(op == 'R'){
                     rs2 = sub_parse_reg_rs2(instr);
+                    if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int
+                        alu_ctrl = 0010;
+                    }
+                    else if(funct_3 == 000 && funct_7 == 0100000){
+                        alu_ctrl = 0110;
+                    }
+                    else if(funct_3 == 111 && funct_7 == 0000000) {
+                        alu_ctrl = 0000;
+                    }
+                    else if(funct_3 == 110 && funct_7 == 0000000) {
+                        alu_ctrl = 0001;
+                    }
                 }
             }
         }
