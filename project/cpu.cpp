@@ -40,8 +40,14 @@ void Cpu::Decode(const char* instr) {  //this is the rf call
             if(op == 'R' || op == 'I'){
                 
                 rs1 = sub_parse_reg_rs1(instr);
-                if(op == 'R'){
+                if(op == 'I' && funct_3 == 010) { //lw instruction
+
+                    alu_ctrl = 0010;
+                }
+
+                if(op == 'R') {
                     rs2 = sub_parse_reg_rs2(instr);
+
                     if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int
                         alu_ctrl = 0010;
                     }
@@ -61,6 +67,12 @@ void Cpu::Decode(const char* instr) {  //this is the rf call
             int rs1 = sub_parse_reg_rs1(instr);
             //printf("Rs1: x%i \n", rs1);
             int rs2 = sub_parse_reg_rs2(instr);
+            if(op == 'S' && funct_3 == 010) {
+                alu_ctrl = 0010;
+            }
+            else if(op == 'B' && funct_3 == 000) {
+                alu_ctrl = 0110;
+            }
         //printf("Rs2: x%i \n", rs2);
         }
     }
