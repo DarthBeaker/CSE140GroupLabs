@@ -20,6 +20,7 @@ private:
     bool mem_read;
     bool mem_to_reg;
     bool mem_write;
+    int alu_op; //JLP needed by control unit
 
     //Our own Varible that we decide we need
     std::string intruction_fetched;

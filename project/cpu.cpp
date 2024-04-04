@@ -146,32 +146,49 @@ void Cpu::Mem() {
 }
 
 void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
-// this is a test JLP
-        
+// set all control signals to false when we start...JLP
+    reg_write = false;
+    alu_op = 11; // none of the ones we need us this one, so is effectively zero JLP
+    alu_src = false;
+    mem_to_reg = false;
+    mem_read = false;
+    branch = false;
+    
+
     //if R-type
-    if(opcode == 0110011){
+    if(opcode == 0110011) {
         reg_write = true;
-        alu_ctrl = true;
+        alu_op = 10;
     }
     
-    //if I type or lw... may not need second JLP
-    if(opcode == 0000011 || opcode == 0010011) {
-        reg_write = true;
+    //if lw JLP
+    else if(opcode == 0000011) {
+        reg_write = true; 
         alu_src = true;
-        mem_to_reg = true;
+        mem_to_reg = true; 
         mem_read = true;
-        alu_ctrl = true;
+        alu_op = 00;
     } //JLP
+    //I type not lw
+    else if (opcode == 0010011) {
+        //not sure if we need JLP
+    }
    
-    //S-type? JLP
-    if(opcode == 0100011) { //if store word
-        //do stuff? JLP
+    //S-type, sw JLP
+    if(opcode == 0100011) { //if store word, same as lw, with mem_write true JLP
+        alu_op = 00;
+        reg_write = true;
+        reg_read = true;
+        mem_to_reg = true;
+        mem_write = true;
+        alu_src = true;
+
     }
 
     //if SB JLP
     if(opcode == 1100011) {
         branch = true;
-        alu_ctrl = true;
+        alu_op = 01;
     }
 
 
