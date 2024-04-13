@@ -129,14 +129,16 @@ void Cpu::Mem() {
     addr = Trans_Hex(hex);
     addr = addr/4;
     
-    if(mem_read == true){
-        //need address to read from; from Exe()
+    if(mem_read == true && mem_write == false){
+        //need address to read from; from Exe() for LW
+        //d_mem[addr] sent to WriteBack()
 
     }
 
-    if(mem_write == true) {
+    if(mem_write == true && mem_read == false) {
         //need address to write to from Exe()
         //need data from which register?
+        //SW, needs d_mem[addr] = data
     }
 
     addr = addr/4; //may move this to translate JLP
