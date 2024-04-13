@@ -178,10 +178,10 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     if(opcode == 0100011) { //if store word, same as lw, with mem_write true JLP
         alu_op = 00;
         reg_write = true;
-        reg_read = true;
+        mem_read = true;
         mem_to_reg = true;
         mem_write = true;
-        alu_src = true;
+        alu_src = true;         //for Mux 0 or 1
 
     }
 
