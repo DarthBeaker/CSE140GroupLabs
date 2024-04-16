@@ -38,6 +38,7 @@ private:
     //for storing between the stages
     int read_data_1;
     int read_data_2;
+    int read_imme; //specifically for S and SB types used to pass between decode and exec
     int alu_output;
     int read_d_mem;
     int dest_reg;
