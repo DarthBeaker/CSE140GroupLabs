@@ -25,7 +25,7 @@ int Cpu::Read_rf(int ptr) {
 
 void Cpu::Decode() {  //this is the rf call
     char op;
-    int funct_3, funct_7, imme;
+    int funct_3, funct_7, imme,;
 
     //will need to call Read_rf and pass to parse...
     //fetch each instruction sequentially 0 - 32
@@ -126,11 +126,11 @@ void Cpu::Mem() {
     //need a function that will take the hex memroy address
     //and translate it into the array index we want
     int addr = 0;
-    //ALU calculates taget memory address in Exe()?
+    //ALU calculates target memory address in Exe()?
     addr = Trans_Hex(hex);
     addr = addr/4;
     
-    if(mem_read == true && mem_write == false){
+    if(mem_read == true && mem_write == false) {
         //need address to read from; from Exe() for LW
         //d_mem[addr] sent to WriteBack()
 

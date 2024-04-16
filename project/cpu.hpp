@@ -3,6 +3,7 @@
 
 #include <string>
 #include "parse.c"
+#include "parse.cpp"
 
 class Cpu{
 private:
