@@ -34,8 +34,8 @@ void Cpu::Decode() {  //this is the rf call
     funct_7 = parse_funct7(instruction_fetched);
     imme = parse_immediate(instruction_fetched);
     //borrowed from parse register function that chooses the registers?
-    read_data_1 = sub_parse_reg_rs1(instruction_fetched);
-    read_data_2 = sub_parse_reg_rs2(instruction_fetched);
+    read_data_1 = rf[sub_parse_reg_rs1(instruction_fetched)];
+    read_data_2 = rf[sub_parse_reg_rs2(instruction_fetched)];
 
     if(op == 'R' || op == 'J' || op == 'I') {
         dest_reg = sub_parse_reg_rd(instruction_fetched);
@@ -170,7 +170,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         alu_op = 00;
     } //JLP
     //I type not lw
-    else if (opcode == 0010011) {
+    else if (opcode == 0010011) { //andi, ori, addi
         //not sure if we need JLP
     }
    
