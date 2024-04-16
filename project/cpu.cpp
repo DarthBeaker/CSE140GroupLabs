@@ -28,66 +28,62 @@ void Cpu::Decode() {  //this is the rf call
     int funct_3, funct_7, imme;
 
     //will need to call Read_rf and pass to parse...
-    //fetch each instruction sequentially 0 - 32
-    for(int i = 0; i < 32; i++) {
-        instr = Read_rf(i);
-        op = parse_instructions(instruction_fetched);
-        funct_3 = parse_funct3(instruction_fetched);
-        funct_7 = parse_funct7(instruction_fetched);
-        imme = parse_immediate(instruction_fetched);
-        //borrowed from parse register function that chooses the registers?
-        read_data_1 = sub_parse_reg_rs1(instruction_fetched);
-        read_data_2 = sub_parse_reg_rs2(instruction_fetched);
 
-        if(op == 'R' || op == 'J' || op == 'I') {
-            dest_reg = sub_parse_reg_rd(instruction_fetched);
+    op = parse_instructions(instruction_fetched);
+    funct_3 = parse_funct3(instruction_fetched);
+    funct_7 = parse_funct7(instruction_fetched);
+    imme = parse_immediate(instruction_fetched);
+    //borrowed from parse register function that chooses the registers?
+    read_data_1 = sub_parse_reg_rs1(instruction_fetched);
+    read_data_2 = sub_parse_reg_rs2(instruction_fetched);
 
-            if(op == 'R' || op == 'I') {
+    if(op == 'R' || op == 'J' || op == 'I') {
+        dest_reg = sub_parse_reg_rd(instruction_fetched);
+
+        if(op == 'R' || op == 'I') {
                 
-                if(op == 'I') {
-                    read_data_2 = imme;
+            if(op == 'I') {
+                read_data_2 = imme;
 
-                    if((op == 'I' && funct_3 == 010)|| (op = 'I' && funct_3 == 000)) { //lw instru && addi instru
+                if((op == 'I' && funct_3 == 010)|| (op = 'I' && funct_3 == 000)) { //lw instru && addi instru
                     
-                    alu_ctrl = "0010";
-                    
-                    }
-                }
-                
-                else if(op == 'R') {
-
-                    if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int
-                        alu_ctrl = "0010";
-                    }
-                    else if(funct_3 == 000 && funct_7 == 0100000){
-                        alu_ctrl = "0110";
-                    }
-                    else if(funct_3 == 111 && funct_7 == 0000000) {
-                        alu_ctrl = "0000";
-                    }
-                    else if(funct_3 == 110 && funct_7 == 0000000) {
-                        alu_ctrl = "0001";
-                    }
-                }
-            }
-        }
-        else if(op == 'S' || op == 'B') {
-
-            if(op == 'S' && funct_3 == 010) {
                 alu_ctrl = "0010";
+                    
+                }
             }
-            else if(op == 'B' && funct_3 == 000) {
-                alu_ctrl = "0110";
+                
+            else if(op == 'R') {
+
+                if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int
+                    alu_ctrl = "0010";
+                }
+                else if(funct_3 == 000 && funct_7 == 0100000){
+                    alu_ctrl = "0110";
+                }
+                else if(funct_3 == 111 && funct_7 == 0000000) {
+                    alu_ctrl = "0000";
+                }
+                else if(funct_3 == 110 && funct_7 == 0000000) {
+                    alu_ctrl = "0001";
+                }
             }
-        //printf("Rs2: x%i \n", rs2);
         }
+    }
+    else if(op == 'S' || op == 'B') {
+
+        if(op == 'S' && funct_3 == 010) {
+            alu_ctrl = "0010";
+        }
+        else if(op == 'B' && funct_3 == 000) {
+            alu_ctrl = "0110";
+        }
+    //printf("Rs2: x%i \n", rs2);
     }
     //rd = sub_parse_reg_rd(instr);
     //rs1 = sub_parse_reg_rs1(instr);
     //rs2 = sub_parse_reg_rs2(instr);
-
-
 }
+
 //arg is a 8-bit memory address? No bigger?
 //using a string, since hex is 0 - F
 // can adjust JLP
@@ -252,20 +248,50 @@ void Cpu::Fetch(std::string filename_input){
 }
 
 void Cpu::Execute(){
-    //we made ALU_src a private string 
+    //AND
+    if(alu_ctrl == "0000"){
+        alu_output = read_data_1 & read_data_2;
+        if(alu_output == 0){
+            alu_zero = true;
+        }
+    }
+    //OR
+    else if(alu_ctrl == "0001"){
+        alu_output = read_data_1 | read_data_2;
+        if(alu_output == 0){
+            alu_zero = true;
+        }
+    }
+    //ADD
+    else if(alu_ctrl == "0010"){
+        alu_output = read_data_1 + read_data_2;
+        if(alu_output == 0){
+            alu_zero = true;
+        }
+    }
+    //SUB
+    else if(alu_ctrl == "0110"){
+        alu_output = read_data_1 - read_data_2;
+        if(alu_output == 0){
+            alu_zero = true;
+        }
+    }
 }
 
 
 void Cpu::Writeback(){
 
-    if(mem_to_reg){
-        //read data read in Mem() by LW
-        
+    //if writing to memory we don't need to write back
+    if(reg_write){
+        if(mem_to_reg){
+            //read data read in Mem() by LW
+            rf[dest_reg] = read_d_mem;
+        }
+        else{
+            //read data from ALU_output and store in register
+            rf[dest_reg] = alu_output;
+        }
     }
-    else{
-        //read data from ALU_output and store in register
-    }
-
 
     //Cycle complete increment total clock cycles
     total_clock_cycles++;
