@@ -251,29 +251,24 @@ void Cpu::Execute(){
     //AND
     if(alu_ctrl == "0000"){
         alu_output = read_data_1 & read_data_2;
-        if(alu_output == 0){
-            alu_zero = true;
-        }
     }
     //OR
     else if(alu_ctrl == "0001"){
         alu_output = read_data_1 | read_data_2;
-        if(alu_output == 0){
-            alu_zero = true;
-        }
     }
     //ADD
     else if(alu_ctrl == "0010"){
         alu_output = read_data_1 + read_data_2;
-        if(alu_output == 0){
-            alu_zero = true;
-        }
     }
     //SUB
     else if(alu_ctrl == "0110"){
         alu_output = read_data_1 - read_data_2;
+    }
+
+    if(branch){
+        branch_target = next_pc + (read_imme << 1);
         if(alu_output == 0){
-            alu_zero = true;
+            alu_zero == true;
         }
     }
 }
