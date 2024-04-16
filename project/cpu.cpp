@@ -122,6 +122,7 @@ void Cpu::Mem() {
     //need a function that will take the hex memroy address
     //and translate it into the array index we want
     int addr = 0;
+    //ALU calculates taget memory address in Exe()?
     addr = Trans_Hex(hex);
     addr = addr/4;
     
@@ -150,6 +151,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     alu_src = false;
     mem_to_reg = false;
     mem_read = false;
+    mem_write = false;
     branch = false;
     
 
@@ -195,12 +197,20 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         if(opcode == 1100111) {
             //mem_to_reg = true; 
             //mem_read = true; 
+            //reg_write = true;
             //alu_op = 00; //set to add
+            //branch = true; 
             //alu_src = true;
             //reg_write = true; //writing the return address back
+            
         }
          //JAL 1101111
          if(opcode == 1101111) {
+            //alu_op == 00; //set to add
+            //branch = true;
+            //mem_read = true;
+            //reg_write = true; 
+            //alu_src = true;
 
          }
     //*/
