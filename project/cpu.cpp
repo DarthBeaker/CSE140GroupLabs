@@ -122,19 +122,19 @@ void Cpu::Mem() {
     //need a function that will take the hex memroy address
     //and translate it into the array index we want
     int addr = 0;
-    //ALU calculates target memory address in Exe()?
-    addr = Trans_Hex(hex);
-    addr = addr/4;
+    //ALU calculates target memory address in Exe().
+    //addr = Trans_Hex(hex); probably do not need.
+    //addr = addr/4; probably do not need
     
     if(mem_read == true && mem_write == false) {
         //need address to read from; from Exe() for LW
-        //d_mem[addr] sent to WriteBack()
+       rf[dest_reg] = d_mem[branch_target] //sent to WriteBack()
 
     }
 
     if(mem_write == true && mem_read == false) {
         //need address to write to from Exe()
-        //need data from which register?
+        //need data = rf[addr] I think JLP
         //SW, needs d_mem[addr] = data
     }
 
