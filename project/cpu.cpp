@@ -171,13 +171,14 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     } //JLP
     //I type not lw
     else if (opcode == 0010011) { //andi, ori, addi
+        //alu_op = 10; // think it is the same for all 3...
         //if(funct_3 == 000) {          //addi
-            //alu_op = 00; //need to add
             //reg_read = true;
             //alu_src = true;
+            //reg_write = true;
         //}
-        //else if(funct_3 == 111) {     //andi
-            //?
+        //else if(funct_3 == 111) {     //lndi
+            
         //}
         //else if(funct_3 == 110) {        //ori
             //?
