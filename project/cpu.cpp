@@ -171,7 +171,17 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     } //JLP
     //I type not lw
     else if (opcode == 0010011) { //andi, ori, addi
-        //not sure if we need JLP
+        //if(funct_3 == 000) {          //addi
+            //alu_op = 00; //need to add
+            //reg_read = true;
+            //alu_src = true;
+        //}
+        //else if(funct_3 == 111) {     //andi
+            //?
+        //}
+        //else if(funct_3 == 110) {        //ori
+            //?
+        //}
     }
    
     //S-type, sw JLP
