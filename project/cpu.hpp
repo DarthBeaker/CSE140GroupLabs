@@ -21,7 +21,9 @@ private:
     bool mem_read;
     bool mem_to_reg;
     bool mem_write;
-    int alu_op; //JLP needed by control unit
+    int alu_op; //JLP needed by control unit, may need to be a string or char
+    int funct_3;
+    int funct_7; 
 
     //Our own Varible that we decide we need
     std::string intruction_fetched;
@@ -30,6 +32,7 @@ private:
 
     //required by the class
     void ControlUnit(int opcode);
+    std::string Alu_Ctrl(int funct_3, int funct_7, int alu_op);
     
     //our own functions
     int Trans_Hex(std::string hex);

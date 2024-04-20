@@ -25,7 +25,7 @@ int Cpu::Read_rf(int ptr) {
 
 void Cpu::Decode() {  //this is the rf call
     char op;
-    int funct_3, funct_7, imme,;
+    int imme,;
 
     //will need to call Read_rf and pass to parse...
 
@@ -150,10 +150,37 @@ void Cpu::Mem() {
 
 }
 
+std::string Alu_Ctrl(int f3, int f7, int aluop) {       //header file has more details about function JLP
+    if(aluop == 00) {  //lw | sw I-type, S-type JLP
+        return "0010";
+    }
+    else if(aluop == 10 && f7 == 0100000) { //R-type subtract, only one that uses f7
+        return "0110";
+    }
+    //I-type & R-type add/addi, and/andi, or/ori
+    else if(aluop == 11 || aluop == 10) {
+        if(f3 == 000) {     //add|addi
+            return "0010";
+        }
+        else if(f3 == 111) { //and|andi instr JLP
+            return "0000";
+        }
+        else if(f3 == 110) {
+            return "0001";
+        }
+    }
+    // SB-type JLP
+    else if(aluop == 01) {
+        if(f3 == 000) {         //beq, will need f3 differentiation if we want to expand JLP
+            return "0110";
+        }
+    }
+} 
+
 void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
 // set all control signals to false when we start...JLP
     reg_write = false;
-    alu_op = 11; // none of the ones we need us this one, so is effectively zero JLP
+    alu_op = 22; // none of the ones we need us this one, so is effectively zero JLP
     alu_src = false;
     mem_to_reg = false;
     mem_read = false;
@@ -165,19 +192,21 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     if(opcode == 0110011) {
         reg_write = true;
         alu_op = 10;
-        if(funct_3 == 000 && funct_7 == 0000000) {  // add instr JLP
-                    alu_ctrl = "0010";
-                }
-                else if(funct_3 == 000 && funct_7 == 0100000){  // sub instr JLP
-                    alu_ctrl = "0110";
-                }
-                else if(funct_3 == 111 && funct_7 == 0000000) { //and instr JLP
-                    alu_ctrl = "0000";
-                }
-                else if(funct_3 == 110 && funct_7 == 0000000) { //or instr JLP
-                    alu_ctrl = "0001";
-                }
-    }
+        alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
+
+    //     if(funct_3 == 000 && funct_7 == 0000000) {  // add instr JLP
+    //                 alu_ctrl = "0010";
+    //     }
+    //             else if(funct_3 == 000 && funct_7 == 0100000){  // sub instr JLP
+    //                 alu_ctrl = "0110";
+    //             }
+    //             else if(funct_3 == 111 && funct_7 == 0000000) { //and instr JLP
+    //                 alu_ctrl = "0000";
+    //             }
+    //             else if(funct_3 == 110 && funct_7 == 0000000) { //or instr JLP
+    //                 alu_ctrl = "0001";
+    //             } remove later if works JLP
+    } 
     
     //if lw; I-type JLP
     else if(opcode == 0000011) {
@@ -186,19 +215,27 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         mem_to_reg = true; 
         mem_read = true;
         alu_op = 00;
-        alu_ctrl = "0010";
+        alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
+        //alu_ctrl = "0010";
     } //JLP
     //I type not lw
     else if (opcode == 0010011) { //andi, ori, addi
-        if(funct_3 == 000) { //addi
-            alu_ctrl = "0010"; 
-        }
-        else if(funct_3 == 110) { //ori
-            alu_ctrl = "0001";
-        }
-        else if(funct_3 == 111) { //andi
-            alu_ctrl = "0000";
-        }
+        reg_read = true;
+        alu_src = true;
+        reg_write = true;
+        alu_op = 11;
+
+        alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
+        
+        // if(funct_3 == 000) { //addi
+        //     alu_ctrl = "0010"; 
+        // }
+        // else if(funct_3 == 110) { //ori
+        //     alu_ctrl = "0001";
+        // }
+        // else if(funct_3 == 111) { //andi
+        //     alu_ctrl = "0000";
+        // }
         //alu_op = 10; // think it is the same for all 3...
         //if(funct_3 == 000) {          //addi
             //reg_read = true;
@@ -221,10 +258,10 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         mem_to_reg = true;
         mem_write = true;
         alu_src = true;         //for Mux 0 or 1
-        
-        if(funct_3 == 010) {  //sw, don't really need, but if we were to extend... JLP
-            alu_ctl = "0010"; 
-        }
+        alu_ctrl = Alu_Ctrl(f3, f7, alu_op);
+        // if(funct_3 == 010) {  //sw, don't really need, but if we were to extend... JLP
+        //     alu_ctl = "0010"; 
+        // } //remove if current works JLP
     }
 
     //if SB JLP
@@ -232,9 +269,9 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         branch = true;
         alu_op = 01;
 
-        if(funct_3 == 000) {    //test if beq... the only SB we have thusfar... JLP
-            alu_ctrl = "0110";
-        }
+        // if(funct_3 == 000) {    //test if beq... the only SB we have thusfar... JLP
+        //     alu_ctrl = "0110";
+        // } //remove if current works JLP
     }
 
 
