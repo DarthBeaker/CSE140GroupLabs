@@ -48,7 +48,7 @@ void Cpu::Decode() {  //this is the rf call
                 if(op == 'I' && funct_3 == 010) {  //if lw instr send opcode
                     ControlUnit(00000011); // 
                 } 
-                else if(op = 'I' && (funct_3 == 000 || funct_3 == 110 || funct_3 == 111)) { //may not need the funct_3 check... need to look at I instru list
+                else { // if it is not lw, and it is I, it must have this opcode JLP
                     ControlUnit(0010011);
                 }
             }
@@ -72,14 +72,17 @@ void Cpu::Decode() {  //this is the rf call
             }
         }
     }
-    else if(op == 'S' || op == 'B') {   //here will need to add opcode passing to Control_Unit JLP
-
-        if(op == 'S' && funct_3 == 010) {       //move to Control Unit JLP
-            alu_ctrl = "0010";
-        }
-        else if(op == 'B' && funct_3 == 000) {  //move to Control Unit JLP
-            alu_ctrl = "0110";
-        }
+    else if(op == 'S' ) {   //S opcode, but really just checking for sw JLP
+        ControlUnit(0100011);
+    }
+    else if(op == 'B') {   //SB opcode, but really just checkign for beq JLP
+        ControlUnit(1100011);
+        // if(op == 'S' && funct_3 == 010) {       //remove when code checks our JLP
+        //     alu_ctrl = "0010";
+        // }
+        // else if(op == 'B' && funct_3 == 000) {  //remove when code checks out JLP
+        //     alu_ctrl = "0110";
+        // }
     //printf("Rs2: x%i \n", rs2);
     }
     //rd = sub_parse_reg_rd(instr);
@@ -176,7 +179,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
                 }
     }
     
-    //if lw JLP
+    //if lw; I-type JLP
     else if(opcode == 0000011) {
         reg_write = true; 
         alu_src = true;
@@ -188,13 +191,13 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     //I type not lw
     else if (opcode == 0010011) { //andi, ori, addi
         if(funct_3 == 000) { //addi
-            //alu_ctrl = "0010"; 
+            alu_ctrl = "0010"; 
         }
         else if(funct_3 == 110) { //ori
-            //alu_ctrl = "ori";
+            alu_ctrl = "0001";
         }
         else if(funct_3 == 111) { //andi
-            //alu_ctrl = "andi";
+            alu_ctrl = "0000";
         }
         //alu_op = 10; // think it is the same for all 3...
         //if(funct_3 == 000) {          //addi
@@ -211,20 +214,27 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     }
    
     //S-type, sw JLP
-    if(opcode == 0100011) { //if store word, same as lw, with mem_write true JLP
+    if(opcode == 0100011) { //if sw, same as lw, with mem_write true JLP
         alu_op = 00;
         reg_write = true;
         mem_read = true;
         mem_to_reg = true;
         mem_write = true;
         alu_src = true;         //for Mux 0 or 1
-
+        
+        if(funct_3 == 010) {  //sw, don't really need, but if we were to extend... JLP
+            alu_ctl = "0010"; 
+        }
     }
 
     //if SB JLP
     if(opcode == 1100011) {
         branch = true;
         alu_op = 01;
+
+        if(funct_3 == 000) {    //test if beq... the only SB we have thusfar... JLP
+            alu_ctrl = "0110";
+        }
     }
 
 
