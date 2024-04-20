@@ -45,27 +45,30 @@ void Cpu::Decode() {  //this is the rf call
             if(op == 'I') {
                 read_data_2 = imme;
 
-                if((op == 'I' && funct_3 == 010)|| (op = 'I' && funct_3 == 000)) { //lw instru && addi instru
-                    
-                alu_ctrl = "0010";
-                    
+                if(op == 'I' && funct_3 == 010) {  //if lw instr send opcode
+                    ControlUnit(00000011); // 
+                } 
+                else if(op = 'I' && (funct_3 == 000 || funct_3 == 110 || funct_3 == 111)) { //may not need the funct_3 check... need to look at I instru list
+                    ControlUnit(0010011);
                 }
             }
                 
             else if(op == 'R') {    //pass the R opcode to Control_Unit here JLP
-                //Control_Unit(0110011);        //something like this JLP
-                if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int move this to Control_unit JLP
-                    alu_ctrl = "0010";
-                }
-                else if(funct_3 == 000 && funct_7 == 0100000){  //move to Control_Unit JLP
-                    alu_ctrl = "0110";
-                }
-                else if(funct_3 == 111 && funct_7 == 0000000) { //move to Control_Unit JLP
-                    alu_ctrl = "0000";
-                }
-                else if(funct_3 == 110 && funct_7 == 0000000) { //move to Control_Unit JLP
-                    alu_ctrl = "0001";
-                }
+                ControlUnit(0110011);        //something like this JLP
+
+                //Remove when sure code is functional JLP 
+                // if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int move this to Control_unit JLP
+                //     alu_ctrl = "0010";
+                // }
+                // else if(funct_3 == 000 && funct_7 == 0100000){  //move to Control_Unit JLP
+                //     alu_ctrl = "0110";
+                // }
+                // else if(funct_3 == 111 && funct_7 == 0000000) { //move to Control_Unit JLP
+                //     alu_ctrl = "0000";
+                // }
+                // else if(funct_3 == 110 && funct_7 == 0000000) { //move to Control_Unit JLP
+                //     alu_ctrl = "0001";
+                // }
             }
         }
     }
@@ -159,6 +162,18 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     if(opcode == 0110011) {
         reg_write = true;
         alu_op = 10;
+        if(funct_3 == 000 && funct_7 == 0000000) {  // add instr JLP
+                    alu_ctrl = "0010";
+                }
+                else if(funct_3 == 000 && funct_7 == 0100000){  // sub instr JLP
+                    alu_ctrl = "0110";
+                }
+                else if(funct_3 == 111 && funct_7 == 0000000) { //and instr JLP
+                    alu_ctrl = "0000";
+                }
+                else if(funct_3 == 110 && funct_7 == 0000000) { //or instr JLP
+                    alu_ctrl = "0001";
+                }
     }
     
     //if lw JLP
@@ -168,9 +183,19 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         mem_to_reg = true; 
         mem_read = true;
         alu_op = 00;
+        alu_ctrl = "0010";
     } //JLP
     //I type not lw
     else if (opcode == 0010011) { //andi, ori, addi
+        if(funct_3 == 000) { //addi
+            //alu_ctrl = "0010"; 
+        }
+        else if(funct_3 == 110) { //ori
+            //alu_ctrl = "ori";
+        }
+        else if(funct_3 == 111) { //andi
+            //alu_ctrl = "andi";
+        }
         //alu_op = 10; // think it is the same for all 3...
         //if(funct_3 == 000) {          //addi
             //reg_read = true;
