@@ -52,29 +52,29 @@ void Cpu::Decode() {  //this is the rf call
                 }
             }
                 
-            else if(op == 'R') {
-
-                if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int
+            else if(op == 'R') {    //pass the R opcode to Control_Unit here JLP
+                //Control_Unit(0110011);        //something like this JLP
+                if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int move this to Control_unit JLP
                     alu_ctrl = "0010";
                 }
-                else if(funct_3 == 000 && funct_7 == 0100000){
+                else if(funct_3 == 000 && funct_7 == 0100000){  //move to Control_Unit JLP
                     alu_ctrl = "0110";
                 }
-                else if(funct_3 == 111 && funct_7 == 0000000) {
+                else if(funct_3 == 111 && funct_7 == 0000000) { //move to Control_Unit JLP
                     alu_ctrl = "0000";
                 }
-                else if(funct_3 == 110 && funct_7 == 0000000) {
+                else if(funct_3 == 110 && funct_7 == 0000000) { //move to Control_Unit JLP
                     alu_ctrl = "0001";
                 }
             }
         }
     }
-    else if(op == 'S' || op == 'B') {
+    else if(op == 'S' || op == 'B') {   //here will need to add opcode passing to Control_Unit JLP
 
-        if(op == 'S' && funct_3 == 010) {
+        if(op == 'S' && funct_3 == 010) {       //move to Control Unit JLP
             alu_ctrl = "0010";
         }
-        else if(op == 'B' && funct_3 == 000) {
+        else if(op == 'B' && funct_3 == 000) {  //move to Control Unit JLP
             alu_ctrl = "0110";
         }
     //printf("Rs2: x%i \n", rs2);
