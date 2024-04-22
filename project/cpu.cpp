@@ -25,7 +25,7 @@ int Cpu::Read_rf(int ptr) {
 
 void Cpu::Decode() {  //this is the rf call
     char op;
-    int imme,;
+    int imme;
 
     //will need to call Read_rf and pass to parse...
 
@@ -134,14 +134,14 @@ void Cpu::Mem() {
     
     if(mem_read == true && mem_write == false) {
         //need address to read from; from Exe() for LW
-       rf[dest_reg] = d_mem[branch_target] //sent to WriteBack()
+       rf[dest_reg] = d_mem[branch_target]; //sent to WriteBack()
 
     }
 
     if(mem_write == true && mem_read == false) {
         //need address to write to from Exe()
         //need data = rf[addr] I think JLP
-        //SW, needs d_mem[addr] = data
+        //SW, needs d_mem[addr] = data;
     }
 
     addr = addr/4; //may move this to translate JLP
@@ -220,7 +220,6 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     } //JLP
     //I type not lw
     else if (opcode == 0010011) { //andi, ori, addi
-        reg_read = true;
         alu_src = true;
         reg_write = true;
         alu_op = 11;
@@ -258,7 +257,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         mem_to_reg = true;
         mem_write = true;
         alu_src = true;         //for Mux 0 or 1
-        alu_ctrl = Alu_Ctrl(f3, f7, alu_op);
+        alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
         // if(funct_3 == 010) {  //sw, don't really need, but if we were to extend... JLP
         //     alu_ctl = "0010"; 
         // } //remove if current works JLP
@@ -280,7 +279,6 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         if(opcode == 1100111) {
             //mem_to_reg = true; 
             //mem_read = true; 
-            //reg_write = true;
             //alu_op = 00; //set to add
             //branch = true; 
             //alu_src = true;
@@ -330,7 +328,7 @@ void Cpu::Fetch(std::string filename_input){
         instruction_file.seekg(0, file_position);
 
         //pull instruction
-        getline(instruction_file, intruction_fetched);
+        getline(instruction_file, instruction_fetched);
     }
 
 

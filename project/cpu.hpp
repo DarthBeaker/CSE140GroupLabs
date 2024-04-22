@@ -26,7 +26,7 @@ private:
     int funct_7; 
 
     //Our own Varible that we decide we need
-    std::string intruction_fetched;
+    std::string instruction_fetched;
     std::string filename;
 
 

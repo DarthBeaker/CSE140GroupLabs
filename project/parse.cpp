@@ -171,7 +171,6 @@ int parse_immediate(std::string instr){
         }
         //printf("%s\n", imme);
         val = sub_parse_Imm(imme, 0, 12);
-        free(imme);
 
         if(val > 2048) {
             val = twosComp(val);
@@ -192,7 +191,7 @@ int parse_immediate(std::string instr){
             j++;
         }
         val = sub_parse_Imm(imme, 0, 12);
-        free(imme);
+
 
         if(val > 2048) {
             val = twosComp(val);
@@ -219,8 +218,7 @@ int parse_immediate(std::string instr){
         }
         //printf("j: %i, Imme: %s \n", j, imme);
         val = sub_parse_Imm(imme, 0, 20);
-        free(imme);
-
+        
         val *= 2;
 
 
