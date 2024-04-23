@@ -13,8 +13,8 @@ const int rsSz = 5;
 const int ImmI = 5; 
 const int ImmSz2 = 16; 
 const int numOfFunct7 = 8;
-//opcode look-up table     R-instr    I-instr    I-instr    I-instr    S-instr   SB-instr     UJ-instr   
-std::string opCodeLU[] = {"0110011", "0010011", "0000011", "1100111", "0100011", "1100011", "1101111"};
+//opcode look-up table     R-instr    I-instr    I-instr    I-instr    S-instr   SB-instr    JAL-instr  JALR-instr 
+std::string opCodeLU[] = {"0110011", "0010011", "0000011", "1100111", "0100011", "1100011", "1101111", "1100111"};
 std::string f3LU[] = {"000", "001", "010", "011", "100", "101", "110", "111"};
 //function definitions
 void print_instructions(std::string); //main function will call subfunctions KP

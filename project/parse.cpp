@@ -112,7 +112,7 @@ int parse_funct7(std::string instr){
 //Returns: int represents the immediate
 */
 int parse_immediate(std::string instr){
-    char op = parse_instructions(instr);
+    std::string op = parse_instructions(instr);
     int val = 0;
     int len = 0;
     std::string imme;
@@ -130,14 +130,14 @@ int parse_immediate(std::string instr){
     }
     //char *imme = malloc(sizeof(char) * (len + 1));
 
-    if(op == 'R') {
+    if(op == opCodeLU[0]) {         //R instruction
         return -1;                  //indicates no immediate used JLP
     }
-    else if(op == 'I') {
+    else if(op == opCodeLU[1] || op == opCodeLU[2] || op == opCodeLU[3]) {  //any of the 3 I instructions JLP
         val = sub_parse_Imm(instr,20, instrSz);
         return val;
     }
-    else if(op == 'S') {
+    else if(op == opCodeLU[4]) {        //S-type instruction (sw) JLP
          //read immedates 
         
         for(int i = 25; i < instrSz; i++) {
@@ -157,7 +157,7 @@ int parse_immediate(std::string instr){
         }
         return val;
     }
-    else if(op == 'B') {
+    else if(op == opCodeLU[5]) {    // SB (branch) type
         j = 2;
         imme[0] = instr[0];
         imme[1] = instr[24];
@@ -178,9 +178,9 @@ int parse_immediate(std::string instr){
 
         return (val * 2); 
     }
-   else if(op == 'J') {
+   else if(op == opCodeLU[6] || op == opCodeLU[7]) { //jal or jalr 
         //call function parse_Imm_U(instr);
-        //covers U & UJ
+        //covers JAL & JALR
         int j = 0;
         imme[j] = instr[0];
         j++;
