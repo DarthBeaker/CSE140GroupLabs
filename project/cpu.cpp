@@ -291,21 +291,17 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     ///*
         //if JALR 1100111 is an I instruction...
         if(opcode == 1100111) {
-            //mem_to_reg = true; 
-            //mem_read = true; 
-            //alu_op = 00; //set to add
+            alu_op = 00; //set to add
             //branch = true; 
-            //alu_src = true;
-            //reg_write = true; //writing the return address back
+            alu_src = true;
+            reg_write = true; //writing the return address back
             
         }
          //JAL 1101111
          if(opcode == 1101111) {
-            //alu_op == 00; //set to add
+            alu_op == 00; //set to add
             //branch = true;
-            //mem_read = true;
-            //reg_write = true; 
-            //alu_src = true;
+            alu_src = true;
 
          }
     //*/

@@ -14,11 +14,11 @@
 //Returns: char representing the OpCode
 //******************************************
 
-char parse_instructions(std::string instr){   //since the Opcode is always the last 7 bits, we can easily extract them
-    char opCode[opCodeSz + 1];
+std::string parse_instructions(std::string instr){   //since the Opcode is always the last 7 bits, we can easily extract them
+    std::string opCode = "";
     
     for(int i = instrSz - opCodeSz; i < instrSz; i++) { 
-        opCode[i-25] = instr[i]; 
+        opCode += instr[i]; 
         //printf("%i\n", i); //is iteration happening as expected? JLP
     }
     //must have null terminated character
@@ -26,23 +26,16 @@ char parse_instructions(std::string instr){   //since the Opcode is always the l
 
     //printf("%s\n", opCode); // is opCode correct?
     
-    if(strcmp(opCode , opCodeLU[0].c_str()) == 0) {            //Which type is it? JLP
-        return 'R';
+    for(int i = 0; i < opCodeSz; i++){
+        if(opCode == opCode[i]) {
+    //if(strcmp(opCode , opCodeLU[0].c_str()) == 0) {            //Which type is it? JLP
+        
+            return opCode;
+        }    
     }
-    else if((strcmp(opCode, opCodeLU[1].c_str()) == 0 ) || (strcmp(opCode, opCodeLU[2].c_str()) == 0) || (strcmp(opCode, opCodeLU[3].c_str()) == 0)) {
-        return 'I';
-    }
-    else if(strcmp(opCode, opCodeLU[4].c_str()) == 0) {
-        return 'S';
-    }
-    else if(strcmp(opCode, opCodeLU[5].c_str()) == 0) {
-        return 'B';                         //Note: this is our shorthand for SB JLP
-    }
-    else if(strcmp(opCode, opCodeLU[6].c_str()) == 0) {
-        return 'J';                         //Note: this is our shorthand for UJ JLP
-    }
+
     printf("%s\n", "Invalid Code");         
-    return 'Z';                            //Note: shorthand for invalid code JLP
+    return "Z";                            //Note: shorthand for invalid code JLP
 }
 
 //******************************************

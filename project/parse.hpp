@@ -17,7 +17,7 @@ std::string opCodeLU[] = {"0110011", "0010011", "0000011", "1100111", "0100011",
 std::string f3LU[] = {"000", "001", "010", "011", "100", "101", "110", "111"};
 //function definitions
 void print_instructions(std::string); //main function will call subfunctions KP
-char parse_instructions(std::string); //find the opcode, returns instruct type KP
+std::string parse_instructions(std::string); //find the opcode, returns instruct type KP
 int parse_funct3(std::string);
 int parse_funct7(std::string);
 int parse_immediate(std::string);
