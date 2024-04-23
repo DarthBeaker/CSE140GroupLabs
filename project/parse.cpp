@@ -15,6 +15,7 @@
 //******************************************
 
 std::string parse_instructions(std::string instr){   //since the Opcode is always the last 7 bits, we can easily extract them
+    
     std::string opCode = "";
     
     for(int i = instrSz - opCodeSz; i < instrSz; i++) { 
@@ -22,12 +23,12 @@ std::string parse_instructions(std::string instr){   //since the Opcode is alway
         //printf("%i\n", i); //is iteration happening as expected? JLP
     }
     //must have null terminated character
-    opCode[opCodeSz] = '\0';
+    //opCode[opCodeSz] = '\0';
 
     //printf("%s\n", opCode); // is opCode correct?
     
     for(int i = 0; i < opCodeSz; i++){
-        if(opCode == opCode[i]) {
+        if(opCode == opCodeLU[i]) {
     //if(strcmp(opCode , opCodeLU[0].c_str()) == 0) {            //Which type is it? JLP
         
             return opCode;
