@@ -65,7 +65,7 @@ int parse_funct3(std::string instr) {
     //will deal with what that means JLP
 
     //turned if/else chain into for loop
-    for(int i = 0; i <= opCodeSz; i++){
+    for(int i = 0; i < numOfFunct7; i++){
         if(strcmp(funct3, f3LU[i].c_str()) == 0) {
             return i;
         }
@@ -112,7 +112,7 @@ int parse_funct7(std::string instr){
 //Returns: int represents the immediate
 */
 int parse_immediate(std::string instr){
-      char op = parse_instructions(instr);
+    char op = parse_instructions(instr);
     int val = 0;
     int len = 0;
     std::string imme;

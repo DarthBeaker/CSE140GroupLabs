@@ -27,7 +27,7 @@ int Cpu::Read_rf(int ptr) {
 }
 
 void Cpu::Decode() {  //this is the rf call
-    char op;
+    string op;
     int imme;
 
     //will need to call Read_rf and pass to parse...
@@ -41,15 +41,15 @@ void Cpu::Decode() {  //this is the rf call
     read_data_1 = rf[sub_parse_reg_rs1(instruction_fetched)];
     read_data_2 = rf[sub_parse_reg_rs2(instruction_fetched)];
     
-    if(op == 'R' || op == 'J' || op == 'I') {
+    if(op == "0110011" || op == "1100111" /* jalr */ || op == "1101111" /*jal*/ || op == "0000011" || op == "0010011") {
         dest_reg = sub_parse_reg_rd(instruction_fetched);
 
-        if(op == 'R' || op == 'I') {
+        if(op == "0110011" || op == "0000011" || op == "0010011") {
                 
-            if(op == 'I') {
+            if(op == "0000011" || op == "0010011") {
                 read_data_2 = imme;
 
-                if(op == 'I' && funct_3 == 0b010) {  //if lw instr send opcode
+                if(op == "0000011" && funct_3 == 0b010) {  //if lw instr send opcode
                     ControlUnit(00000011); // 
                 } 
                 else { // if it is not lw, and it is I, it must have this opcode JLP
@@ -57,7 +57,7 @@ void Cpu::Decode() {  //this is the rf call
                 }
             }
                 
-            else if(op == 'R') {    //pass the R opcode to Control_Unit here JLP
+            else if(op == "0110011") {    //pass the R opcode to Control_Unit here JLP
                 ControlUnit(0110011);        //something like this JLP
 
                 //Remove when sure code is functional JLP 
@@ -76,12 +76,12 @@ void Cpu::Decode() {  //this is the rf call
             }
         }
     }
-    else if(op == 'S' ) {   //S opcode, but really just checking for sw 
+    else if(op == "0100011" ) {   //S opcode, but really just checking for sw 
         read_data_2 = imme;
         read_data_s = rf[sub_parse_reg_rs2(instruction_fetched)];
         ControlUnit(0100011);
     }
-    else if(op == 'B') {   //SB opcode, but really just checkign for beq JLP
+    else if(op == "1100011") {   //SB opcode, but really just checkign for beq JLP
         read_imme = imme;
         ControlUnit(1100011);
         // if(op == 'S' && funct_3 == 010) {       //remove when code checks our JLP
@@ -301,6 +301,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
          if(opcode == 1101111) {
             alu_op == 00; //set to add
             //branch = true;
+            reg_write = true; 
             alu_src = true;
 
          }
