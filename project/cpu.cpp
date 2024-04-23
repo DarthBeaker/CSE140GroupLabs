@@ -1,13 +1,15 @@
 #include <fstream>
+#include <iostream>
 #include "cpu.hpp"
-
+#include "parse.cpp"
 
 using namespace std;
 
 
 Cpu::Cpu(){
-    pc = 0;
+    pc = 0x4;
     total_clock_cycles = 0;
+    next_pc = pc + 4;
 }
 
 Cpu::~Cpu(){
@@ -33,10 +35,11 @@ void Cpu::Decode() {  //this is the rf call
     funct_3 = parse_funct3(instruction_fetched);
     funct_7 = parse_funct7(instruction_fetched);
     imme = parse_immediate(instruction_fetched);
+    //cout << "funct_3: " << funct_3 << " funct_7: " << funct_7 << "\n";
     //borrowed from parse register function that chooses the registers?
     read_data_1 = rf[sub_parse_reg_rs1(instruction_fetched)];
     read_data_2 = rf[sub_parse_reg_rs2(instruction_fetched)];
-
+    
     if(op == 'R' || op == 'J' || op == 'I') {
         dest_reg = sub_parse_reg_rd(instruction_fetched);
 
@@ -45,7 +48,7 @@ void Cpu::Decode() {  //this is the rf call
             if(op == 'I') {
                 read_data_2 = imme;
 
-                if(op == 'I' && funct_3 == 010) {  //if lw instr send opcode
+                if(op == 'I' && funct_3 == 0b010) {  //if lw instr send opcode
                     ControlUnit(00000011); // 
                 } 
                 else { // if it is not lw, and it is I, it must have this opcode JLP
@@ -72,10 +75,13 @@ void Cpu::Decode() {  //this is the rf call
             }
         }
     }
-    else if(op == 'S' ) {   //S opcode, but really just checking for sw JLP
+    else if(op == 'S' ) {   //S opcode, but really just checking for sw 
+        read_data_2 = imme;
+        read_data_s = rf[sub_parse_reg_rs2(instruction_fetched)];
         ControlUnit(0100011);
     }
     else if(op == 'B') {   //SB opcode, but really just checkign for beq JLP
+        read_imme = imme;
         ControlUnit(1100011);
         // if(op == 'S' && funct_3 == 010) {       //remove when code checks our JLP
         //     alu_ctrl = "0010";
@@ -131,47 +137,54 @@ void Cpu::Mem() {
     //ALU calculates target memory address in Exe().
     //addr = Trans_Hex(hex); probably do not need.
     //addr = addr/4; probably do not need
+
+    if(mem_read || mem_write){
+        addr = alu_output/4;
+        if(mem_read == true && mem_write == false) {
+            //need address to read from; from Exe() for LW
+            //rf[dest_reg] = d_mem[branch_target]; //sent to WriteBack()
+
+            //think this is needed here
+            read_d_mem = d_mem[addr]; //get the data for Writeback() JLP
+        }
+        else if(mem_write == true && mem_read == false) {
+            //need address to write to from Exe()
+            //need data = rf[addr] I think JLP
+            //SW, needs d_mem[addr] = data;
+            d_mem[addr] = read_data_s;
+        }
+    }
     
-    if(mem_read == true && mem_write == false) {
-        //need address to read from; from Exe() for LW
-       rf[dest_reg] = d_mem[branch_target]; //sent to WriteBack()
 
-    }
 
-    if(mem_write == true && mem_read == false) {
-        //need address to write to from Exe()
-        //need data = rf[addr] I think JLP
-        //SW, needs d_mem[addr] = data;
-    }
-
-    addr = addr/4; //may move this to translate JLP
-    read_d_mem = d_mem[addr]; //get the data for Writeback() JLP
+    // addr = addr/4; //may move this to translate JLP
+    // read_d_mem = d_mem[addr]; //get the data for Writeback() JLP
     //do some variables for lw/sw need updating here? JLP
 
 }
 
-std::string Alu_Ctrl(int f3, int f7, int aluop) {       //header file has more details about function JLP
-    if(aluop == 00) {  //lw | sw I-type, S-type JLP
+std::string Cpu::Alu_Ctrl(int f3, int f7, int aluop) {       //header file has more details about function JLP
+    if(aluop == 0b00) {  //lw | sw I-type, S-type JLP
         return "0010";
     }
-    else if(aluop == 10 && f7 == 0100000) { //R-type subtract, only one that uses f7
+    else if(aluop == 10 && f7 == 0b0100000) { //R-type subtract, only one that uses f7
         return "0110";
     }
     //I-type & R-type add/addi, and/andi, or/ori
     else if(aluop == 11 || aluop == 10) {
-        if(f3 == 000) {     //add|addi
+        if(f3 == 0b000) {     //add|addi
             return "0010";
         }
-        else if(f3 == 111) { //and|andi instr JLP
+        else if(f3 == 0b111) { //and|andi instr JLP
             return "0000";
         }
-        else if(f3 == 110) {
+        else if(f3 == 0b110) {
             return "0001";
         }
     }
     // SB-type JLP
     else if(aluop == 01) {
-        if(f3 == 000) {         //beq, will need f3 differentiation if we want to expand JLP
+        if(f3 == 0b000) {         //beq, will need f3 differentiation if we want to expand JLP
             return "0110";
         }
     }
@@ -324,11 +337,13 @@ void Cpu::Fetch(std::string filename_input){
         //characters on a line and the current pc counter divided by 4 (since it increments by 4 each time 
         // unless branching but regardless it's multiples of four)
         // double check this actually works, at the least it should be close
-        int file_position = pc/4 * 33; //each line is 33 characters (32 "bits" and then a \n)
-        instruction_file.seekg(0, file_position);
-
+        int file_position = (pc/4 - 1) * 34; 
+        instruction_file.seekg(file_position);
+        
         //pull instruction
         getline(instruction_file, instruction_fetched);
+        //check this works
+        //cout << "Instruction fetched: " << instruction_fetched << "\n";
     }
 
 
@@ -339,6 +354,7 @@ void Cpu::Fetch(std::string filename_input){
 }
 
 void Cpu::Execute(){
+    //cout << "alu_ctrl: " << alu_ctrl << "\n";
     //AND
     if(alu_ctrl == "0000"){
         alu_output = read_data_1 & read_data_2;
@@ -362,23 +378,30 @@ void Cpu::Execute(){
             alu_zero == true;
         }
     }
+    //cout << "alu_output: " << alu_output << "\n";
 }
 
 
 void Cpu::Writeback(){
+    //Cycle complete increment total clock cycles
+    total_clock_cycles++;
+    cout << "Total Clock Cycle " << total_clock_cycles << " :\n"; 
 
     //if writing to memory we don't need to write back
     if(reg_write){
         if(mem_to_reg){
             //read data read in Mem() by LW
             rf[dest_reg] = read_d_mem;
+            cout << "x" << dest_reg << " is modified to " << hex << read_d_mem << "\n";
+
         }
         else{
             //read data from ALU_output and store in register
             rf[dest_reg] = alu_output;
+            cout << "x" << dest_reg << " is modified to 0x" << hex <<  alu_output << "\n";
         }
     }
 
-    //Cycle complete increment total clock cycles
-    total_clock_cycles++;
+
+    cout << "PC is modified to 0x" << hex << pc << "\n";
 }

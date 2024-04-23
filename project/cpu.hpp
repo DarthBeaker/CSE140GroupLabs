@@ -2,13 +2,31 @@
 #define CPU_H
 
 #include <string>
-#include "parse.c"
-#include "parse.cpp"
 
 class Cpu{
 private:
-    int rf[32] = {0};
-    int d_mem[32] = {0};
+    //for sample_part1: x1 = 0x20, x2 = 0x5, x10 = 0x70, x11 = 0x4
+    int rf[32] = {
+        0, 0x20, 0x5, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0x70, 0x4,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
+        };
+    //for sample_part1: 0x70 = 0x5, 0x74 = 0x10 (remember each entry count by 4)
+    int d_mem[32] = {
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0x5, 0x10, 0, 0
+        };
     int pc;
     int next_pc;
     std::string alu_ctrl;
@@ -41,7 +59,8 @@ private:
     //for storing between the stages
     int read_data_1;
     int read_data_2;
-    int read_imme; //specifically for S and SB types used to pass between decode and exec
+    int read_data_s; //specifically for S types used to pass between decode and exec
+    int read_imme; //specifically for SB types used to pass between decode and exec
     int alu_output;
     int read_d_mem;
     int dest_reg;
@@ -51,14 +70,13 @@ public:
     Cpu();
     ~Cpu();
 
-
-    void Decode(std::string instr);
     void Fetch(std::string filename_input);
     void Decode();
     void Execute();
     void Mem();
     void Writeback();
-
+    int getTotalCycles() const {return total_clock_cycles;};
+    int getPC() const {return pc;};
 };
 
 

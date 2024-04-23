@@ -1,5 +1,6 @@
-#include "parse.h"
 #include <string>
+#include <string.h>
+#include "parse.hpp"
 
 
 
@@ -14,29 +15,30 @@
 //******************************************
 
 char parse_instructions(std::string instr){   //since the Opcode is always the last 7 bits, we can easily extract them
-    char opCode[opCodeSz];
+    char opCode[opCodeSz + 1];
     
     for(int i = instrSz - opCodeSz; i < instrSz; i++) { 
         opCode[i-25] = instr[i]; 
         //printf("%i\n", i); //is iteration happening as expected? JLP
     }
+    //must have null terminated character
+    opCode[opCodeSz] = '\0';
 
     //printf("%s\n", opCode); // is opCode correct?
     
-          
-    if(strcmp(opCode , opCodeLU[0]) == 0) {            //Which type is it? JLP
+    if(strcmp(opCode , opCodeLU[0].c_str()) == 0) {            //Which type is it? JLP
         return 'R';
     }
-    else if((strcmp(opCode, opCodeLU[1]) == 0 ) || (strcmp(opCode, opCodeLU[2]) == 0) || (strcmp(opCode, opCodeLU[3]) == 0)) {
+    else if((strcmp(opCode, opCodeLU[1].c_str()) == 0 ) || (strcmp(opCode, opCodeLU[2].c_str()) == 0) || (strcmp(opCode, opCodeLU[3].c_str()) == 0)) {
         return 'I';
     }
-    else if(strcmp(opCode, opCodeLU[4]) == 0) {
+    else if(strcmp(opCode, opCodeLU[4].c_str()) == 0) {
         return 'S';
     }
-    else if(strcmp(opCode, opCodeLU[5]) == 0) {
+    else if(strcmp(opCode, opCodeLU[5].c_str()) == 0) {
         return 'B';                         //Note: this is our shorthand for SB JLP
     }
-    else if(strcmp(opCode, opCodeLU[6]) == 0) {
+    else if(strcmp(opCode, opCodeLU[6].c_str()) == 0) {
         return 'J';                         //Note: this is our shorthand for UJ JLP
     }
     printf("%s\n", "Invalid Code");         
@@ -67,29 +69,12 @@ int parse_funct3(std::string instr) {
 
     //return the decimal number to print or another function 
     //will deal with what that means JLP
-    if(strcmp(funct3,f3LU[0]) == 0) {
-        return 0;
-    }
-    else if(strcmp(funct3, f3LU[1]) == 0) {
-        return 1;
-    }
-    else if(strcmp(funct3, f3LU[2]) == 0) {
-        return 2;
-    }
-    else if(strcmp(funct3, f3LU[3]) == 0) {
-        return 3;
-    }
-    else if(strcmp(funct3, f3LU[4]) == 0) {
-        return 4;
-    }
-    else if(strcmp(funct3, f3LU[5]) == 0) {
-        return 5;
-    }
-    else if(strcmp(funct3, f3LU[6]) == 0) {
-        return 6;
-    }
-    else if(strcmp(funct3, f3LU[7]) == 0) {
-        return 7;
+
+    //turned if/else chain into for loop
+    for(int i = 0; i <= opCodeSz; i++){
+        if(strcmp(funct3, f3LU[i].c_str()) == 0) {
+            return i;
+        }
     }
 
     return 8;                               //Indicates failure, should not be this big JLP
