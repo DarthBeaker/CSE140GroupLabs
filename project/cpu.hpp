@@ -65,6 +65,7 @@ private:
     int read_d_mem;
     int dest_reg;
 
+    bool if_more_instr;
 
 public:
     Cpu();
@@ -77,6 +78,7 @@ public:
     void Writeback();
     int getTotalCycles() const {return total_clock_cycles;};
     int getPC() const {return pc;};
+    bool IfMoreInstr() const {return if_more_instr;};
 };
 
 

@@ -7,9 +7,10 @@ using namespace std;
 
 
 Cpu::Cpu(){
-    pc = 0x4;
+    pc = 0x0;
     total_clock_cycles = 0;
     next_pc = pc + 4;
+    if_more_instr = true;
 }
 
 Cpu::~Cpu(){
@@ -223,7 +224,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     
     //if lw; I-type JLP
     else if(opcode == 0000011) {
-        reg_write = true; 
+        //reg_write = true; 
         alu_src = true;
         mem_to_reg = true; 
         mem_read = true;
@@ -265,9 +266,9 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     //S-type, sw JLP
     if(opcode == 0100011) { //if sw, same as lw, with mem_write true JLP
         alu_op = 00;
-        reg_write = true;
+        //reg_write = true;
         mem_read = true;
-        mem_to_reg = true;
+        //mem_to_reg = true;
         mem_write = true;
         alu_src = true;         //for Mux 0 or 1
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
@@ -346,6 +347,17 @@ void Cpu::Fetch(std::string filename_input){
         //cout << "Instruction fetched: " << instruction_fetched << "\n";
     }
 
+    //find eof()
+    int file_position = (pc/4) * 34; 
+    string dummy_line;
+    instruction_file.seekg(file_position);
+    //pull instruction
+    getline(instruction_file, dummy_line);
+    if(!instruction_file.eof()){
+        if_more_instr = true;
+    }else{
+        if_more_instr = false;
+    }
 
     instruction_file.close();
 
@@ -372,6 +384,7 @@ void Cpu::Execute(){
         alu_output = read_data_1 - read_data_2;
     }
 
+    alu_zero = false;
     if(branch){
         branch_target = next_pc + (read_imme << 1);
         if(alu_output == 0){
@@ -392,7 +405,7 @@ void Cpu::Writeback(){
         if(mem_to_reg){
             //read data read in Mem() by LW
             rf[dest_reg] = read_d_mem;
-            cout << "x" << dest_reg << " is modified to " << hex << read_d_mem << "\n";
+            cout << "x" << dest_reg << " is modified to 0x" << hex << read_d_mem << "\n";
 
         }
         else{
@@ -401,7 +414,12 @@ void Cpu::Writeback(){
             cout << "x" << dest_reg << " is modified to 0x" << hex <<  alu_output << "\n";
         }
     }
+    
+    //for printing and nothing else
+    if(mem_write){
+        cout << "memory 0x" << hex << alu_output << " is modified to 0x" << hex <<  read_data_s << "\n";
 
+    }
 
     cout << "PC is modified to 0x" << hex << pc << "\n";
 }
