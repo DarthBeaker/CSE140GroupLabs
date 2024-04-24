@@ -30,8 +30,6 @@ void Cpu::Decode() {  //this is the rf call
     string op;
     int imme;
 
-    //will need to call Read_rf and pass to parse...
-
     op = parse_instructions(instruction_fetched);
     funct_3 = parse_funct3(instruction_fetched);
     funct_7 = parse_funct7(instruction_fetched);
@@ -59,20 +57,6 @@ void Cpu::Decode() {  //this is the rf call
                 
             else if(op == "0110011") {    //pass the R opcode to Control_Unit here JLP
                 ControlUnit(0110011);        //something like this JLP
-
-                //Remove when sure code is functional JLP 
-                // if(funct_3 == 000 && funct_7 == 0000000) {  //Alu cntl int move this to Control_unit JLP
-                //     alu_ctrl = "0010";
-                // }
-                // else if(funct_3 == 000 && funct_7 == 0100000){  //move to Control_Unit JLP
-                //     alu_ctrl = "0110";
-                // }
-                // else if(funct_3 == 111 && funct_7 == 0000000) { //move to Control_Unit JLP
-                //     alu_ctrl = "0000";
-                // }
-                // else if(funct_3 == 110 && funct_7 == 0000000) { //move to Control_Unit JLP
-                //     alu_ctrl = "0001";
-                // }
             }
         }
     }
@@ -84,17 +68,8 @@ void Cpu::Decode() {  //this is the rf call
     else if(op == "1100011") {   //SB opcode, but really just checkign for beq JLP
         read_imme = imme;
         ControlUnit(1100011);
-        // if(op == 'S' && funct_3 == 010) {       //remove when code checks our JLP
-        //     alu_ctrl = "0010";
-        // }
-        // else if(op == 'B' && funct_3 == 000) {  //remove when code checks out JLP
-        //     alu_ctrl = "0110";
-        // }
     //printf("Rs2: x%i \n", rs2);
     }
-    //rd = sub_parse_reg_rd(instr);
-    //rs1 = sub_parse_reg_rs1(instr);
-    //rs2 = sub_parse_reg_rs2(instr);
 }
 
 //arg is a 8-bit memory address? No bigger?
@@ -136,32 +111,16 @@ void Cpu::Mem() {
     //and translate it into the array index we want
     int addr = 0;
     //ALU calculates target memory address in Exe().
-    //addr = Trans_Hex(hex); probably do not need.
-    //addr = addr/4; probably do not need
 
     if(mem_read || mem_write){
         addr = alu_output/4;
         if(mem_read == true && mem_write == false) {
-            //need address to read from; from Exe() for LW
-            //rf[dest_reg] = d_mem[branch_target]; //sent to WriteBack()
-
-            //think this is needed here
             read_d_mem = d_mem[addr]; //get the data for Writeback() JLP
         }
         else if(mem_write == true && mem_read == false) {
-            //need address to write to from Exe()
-            //need data = rf[addr] I think JLP
-            //SW, needs d_mem[addr] = data;
             d_mem[addr] = read_data_s;
         }
     }
-    
-
-
-    // addr = addr/4; //may move this to translate JLP
-    // read_d_mem = d_mem[addr]; //get the data for Writeback() JLP
-    //do some variables for lw/sw need updating here? JLP
-
 }
 
 std::string Cpu::Alu_Ctrl(int f3, int f7, int aluop) {       //header file has more details about function JLP
@@ -202,24 +161,11 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     branch = false;
     
 
-    //if R-type
+    //if R-type JLP
     if(opcode == 0110011) {
         reg_write = true;
         alu_op = 10;
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
-
-    //     if(funct_3 == 000 && funct_7 == 0000000) {  // add instr JLP
-    //                 alu_ctrl = "0010";
-    //     }
-    //             else if(funct_3 == 000 && funct_7 == 0100000){  // sub instr JLP
-    //                 alu_ctrl = "0110";
-    //             }
-    //             else if(funct_3 == 111 && funct_7 == 0000000) { //and instr JLP
-    //                 alu_ctrl = "0000";
-    //             }
-    //             else if(funct_3 == 110 && funct_7 == 0000000) { //or instr JLP
-    //                 alu_ctrl = "0001";
-    //             } remove later if works JLP
     } 
     
     //if lw; I-type JLP
@@ -230,61 +176,30 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
         mem_read = true;
         alu_op = 00;
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
-        //alu_ctrl = "0010";
     } //JLP
+
     //I type not lw
-    else if (opcode == 0010011) { //andi, ori, addi
+    else if (opcode == 0010011) { //andi, ori, addi JLP
         alu_src = true;
         reg_write = true;
         alu_op = 11;
 
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
-        
-        // if(funct_3 == 000) { //addi
-        //     alu_ctrl = "0010"; 
-        // }
-        // else if(funct_3 == 110) { //ori
-        //     alu_ctrl = "0001";
-        // }
-        // else if(funct_3 == 111) { //andi
-        //     alu_ctrl = "0000";
-        // }
-        //alu_op = 10; // think it is the same for all 3...
-        //if(funct_3 == 000) {          //addi
-            //reg_read = true;
-            //alu_src = true;
-            //reg_write = true;
-        //}
-        //else if(funct_3 == 111) {     //lndi
-            
-        //}
-        //else if(funct_3 == 110) {        //ori
-            //?
-        //}
     }
    
     //S-type, sw JLP
     if(opcode == 0100011) { //if sw, same as lw, with mem_write true JLP
         alu_op = 00;
-        //reg_write = true;
         mem_read = true;
-        //mem_to_reg = true;
         mem_write = true;
         alu_src = true;         //for Mux 0 or 1
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
-        // if(funct_3 == 010) {  //sw, don't really need, but if we were to extend... JLP
-        //     alu_ctl = "0010"; 
-        // } //remove if current works JLP
     }
 
     //if SB JLP
     if(opcode == 1100011) {
         branch = true;
         alu_op = 01;
-
-        // if(funct_3 == 000) {    //test if beq... the only SB we have thusfar... JLP
-        //     alu_ctrl = "0110";
-        // } //remove if current works JLP
     }
 
 
