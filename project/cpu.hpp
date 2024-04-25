@@ -49,7 +49,7 @@ private:
 
 
     //required by the class
-    void ControlUnit(int opcode);
+    void ControlUnit(std::string opcode);
     std::string Alu_Ctrl(int funct_3, int funct_7, int alu_op);
     
     //our own functions

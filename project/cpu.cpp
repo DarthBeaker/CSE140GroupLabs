@@ -38,36 +38,45 @@ void Cpu::Decode() {  //this is the rf call
     //borrowed from parse register function that chooses the registers?
     read_data_1 = rf[sub_parse_reg_rs1(instruction_fetched)];
     read_data_2 = rf[sub_parse_reg_rs2(instruction_fetched)];
-    
+    ControlUnit(op); // all instructions regardless of its code go to controlunit JLP
+
     if(op == "0110011" || op == "1100111" /* jalr */ || op == "1101111" /*jal*/ || op == "0000011" || op == "0010011") {
-        dest_reg = sub_parse_reg_rd(instruction_fetched);
+        dest_reg = sub_parse_reg_rd(instruction_fetched); //I think this is all JAL needs JLP
+        //if(op == "1101111"){
+            // should work JLP
+        //}
+        else if(op == "1100111"){
+            
+            //PC = R[s1] + imme
+        }
 
         if(op == "0110011" || op == "0000011" || op == "0010011") {
                 
             if(op == "0000011" || op == "0010011") {
                 read_data_2 = imme;
 
-                if(op == "0000011" && funct_3 == 0b010) {  //if lw instr send opcode
-                    ControlUnit(00000011); // 
-                } 
-                else { // if it is not lw, and it is I, it must have this opcode JLP
-                    ControlUnit(0010011);
-                }
+                //Think we can safely remove this
+                // if(op == "0000011" && funct_3 == 0b010) {  //if lw instr send opcode 
+                //     ControlUnit(00000011); // 
+                // } 
+                // else { // if it is not lw, and it is I, it must have this opcode JLP
+                //     ControlUnit(0010011);
+                // }
             }
-                
-            else if(op == "0110011") {    //pass the R opcode to Control_Unit here JLP
-                ControlUnit(0110011);        //something like this JLP
-            }
+             //Don't think we need this either JLP   
+            // else if(op == "0110011") {    //pass the R opcode to Control_Unit here JLP
+            //     ControlUnit(0110011);        //something like this JLP
+            // }
         }
     }
     else if(op == "0100011" ) {   //S opcode, but really just checking for sw 
         read_data_2 = imme;
         read_data_s = rf[sub_parse_reg_rs2(instruction_fetched)];
-        ControlUnit(0100011);
+        //ControlUnit(0100011);
     }
     else if(op == "1100011") {   //SB opcode, but really just checkign for beq JLP
         read_imme = imme;
-        ControlUnit(1100011);
+        //ControlUnit(1100011);
     //printf("Rs2: x%i \n", rs2);
     }
 }
@@ -150,7 +159,7 @@ std::string Cpu::Alu_Ctrl(int f3, int f7, int aluop) {       //header file has m
     }
 } 
 
-void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
+void Cpu::ControlUnit(std::string opcode) {     //opcode is 7-bits
 // set all control signals to false when we start...JLP
     reg_write = false;
     alu_op = 22; // none of the ones we need us this one, so is effectively zero JLP
@@ -162,14 +171,14 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     
 
     //if R-type JLP
-    if(opcode == 0110011) {
+    if(opcode == "0110011") {
         reg_write = true;
         alu_op = 10;
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
     } 
     
     //if lw; I-type JLP
-    else if(opcode == 0000011) {
+    else if(opcode == "0000011") {
         //reg_write = true; 
         alu_src = true;
         mem_to_reg = true; 
@@ -179,7 +188,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     } //JLP
 
     //I type not lw
-    else if (opcode == 0010011) { //andi, ori, addi JLP
+    else if (opcode == "0010011") { //andi, ori, addi JLP
         alu_src = true;
         reg_write = true;
         alu_op = 11;
@@ -188,7 +197,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     }
    
     //S-type, sw JLP
-    if(opcode == 0100011) { //if sw, same as lw, with mem_write true JLP
+    if(opcode == "0100011") { //if sw, same as lw, with mem_write true JLP
         alu_op = 00;
         mem_read = true;
         mem_write = true;
@@ -197,7 +206,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
     }
 
     //if SB JLP
-    if(opcode == 1100011) {
+    if(opcode == "1100011") {
         branch = true;
         alu_op = 01;
     }
@@ -205,7 +214,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
 
     ///*
         //if JALR 1100111 is an I instruction...
-        if(opcode == 1100111) {
+        if(opcode == "1100111") {
             alu_op = 00; //set to add
             //branch = true; 
             alu_src = true;
@@ -213,7 +222,7 @@ void Cpu::ControlUnit(int opcode) {     //opcode is 7-bits
             
         }
          //JAL 1101111
-         if(opcode == 1101111) {
+         if(opcode == "1101111") {
             alu_op == 00; //set to add
             //branch = true;
             reg_write = true; 
