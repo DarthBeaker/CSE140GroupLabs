@@ -45,9 +45,10 @@ void Cpu::Decode() {  //this is the rf call
         //if(op == "1101111"){
             // should work JLP
         //}
-        else if(op == "1100111"){
+        else if(op == "1100111") {
             
-            //PC = R[s1] + imme
+            //PC = R[s1] + imme we need to do this
+            //PC = rf[sub_parse_reg_rs1(instruction_fetched)] + imme
         }
 
         if(op == "0110011" || op == "0000011" || op == "0010011") {
