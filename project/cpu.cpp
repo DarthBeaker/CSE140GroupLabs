@@ -245,7 +245,7 @@ void Cpu::Fetch(std::string filename_input) {
     }
     // This will be where we also check for jal/jalr
     // else if(){
-    //      pc = read_data_s + imme;  JLP
+    //      pc = read_data_s + imme;  maybe? JLP
     // }
     else{
         pc = branch_target;

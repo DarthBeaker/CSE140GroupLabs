@@ -5,13 +5,13 @@
 
 
 //******************************************
-//parse_instructions takes a char* arg, the instruction
+//parse_instructions takes a std::string arg, the instruction
 //entered by the user, and parses the last 7 digits (binary)
 //then recognizes its type. When the type is recognized, a
-//single char is returned for printing in the print function
-//Called by: parse_immediate function, print function (later)
-//Argument: char* instr user entered instruction
-//Returns: char representing the OpCode
+//string is returned for use  in other functions function
+//Called by: parse_immediate function, print function, parse_immediate, parse_register, Decode()
+//Argument: std::string instr user entered instruction
+//Returns: std::string representing the OpCode (7 digits)
 //******************************************
 
 std::string parse_instructions(std::string instr){   //since the Opcode is always the last 7 bits, we can easily extract them
@@ -40,12 +40,12 @@ std::string parse_instructions(std::string instr){   //since the Opcode is alway
 }
 
 //******************************************
-//parse_funct3 takes a char* arg, the instruction
+//parse_funct3 takes a std::string arg, the instruction
 //entered by the user, and parses 3 digits (binary) 12 -14
 //then recognizes the funct3 code. When the code is recognized, a
 //single int is returned for intrepretation in the print function
-//Called by: print function (later)
-//Argument: char* instr
+//Called by: print function, Decode()
+//Argument: std::string
 //Returns: int represents the funct3 code
 //******************************************
 
@@ -77,12 +77,12 @@ int parse_funct3(std::string instr) {
 
 
 //******************************************
-//parse_funct7 takes a char* arg, the instruction
+//parse_funct7 takes a std::string arg, the instruction
 //entered by the user, and parses 7 digits (binary) 25-31
 //then recognizes the funct3 code. When the code is recognized, a
 //single int is returned for intrepretation in the print function
-//Called by: print function (later)
-//Argument: char* instr
+//Called by: print function, Decode()
+//Argument: std::string
 //Returns: int represents the funct7 code
 //******************************************
 int parse_funct7(std::string instr){
@@ -107,8 +107,8 @@ int parse_funct7(std::string instr){
 //parse_immediate takes a std::string arg, the instruction
 //entered by the user, and parses ? digits depending on 
 //what instruction type it is
-//Called by: print function (later)
-//Argument: char* instr, ? might need second arg for instruction type ?
+//Called by: print function, Decode()
+//Argument: std::string 
 //Returns: int represents the immediate
 */
 int parse_immediate(std::string instr){
@@ -214,8 +214,8 @@ int parse_immediate(std::string instr){
 //entered by the user, the start & end of the instruction
 // and parses ? digits depending on 
 //what instruction type it is and calculates the decimal value
-//Called by: parse_immiate
-//Argument: char* instr, 
+//Called by: parse_immediate
+//Argument: std::string instr, int start, int end 
 //Returns: int represents the immediate decimal value
 */
 
@@ -239,10 +239,9 @@ int sub_parse_Imm(std::string instr, int start, int end ) {    //most of the tim
 
 
 /************************************************************
-//twoComp takes a char* & 2 ints, the instruction
-//entered by the user, the start & end of the instruction
-// and parses ? digits depending on the start end 
-//then finds the 2's compliment and decimal value
+//twoComp takes an int argument the immediate value from the
+// instruction; converts it from decimal to binary, flips the 
+//bits then finds the 2's compliment and decimal value
 //Called by: parse_immiate
 //Argument: char* instr, int start, int end
 //Returns: int represents the immediate decimal value
@@ -310,7 +309,7 @@ int twosComp(int num) {
 
 
 //******************************************
-//parse_register will take a char arg and then
+//parse_register will take a std::string arg and then
 //read the register value and return the int associated with the c-string of binary
 //might want to also pass what specific register we're trying to read if passing the
 //full instruction or we could in the main function break it up into registers
@@ -351,6 +350,14 @@ void parse_register(std::string instr){
 
 }
 
+//****************************************************
+//sub_parse_reg_rd will take a std::string arg and then
+//extract the value of the destination register from the instruction
+//converts it to a decimal value and returns it.
+//Called by: parse_register, Decode()
+//Agurment: std::string representing an instruction
+//Returns: an integer representing the decimal value of the destination register
+//****************************************************
 
 int sub_parse_reg_rd(std::string instr) {
     int rd_start = 7;
@@ -371,7 +378,14 @@ int sub_parse_reg_rd(std::string instr) {
     return rd_deci_value;
 }
 
-
+//****************************************************
+//sub_parse_reg_rs1 will take a std::string arg and then
+//extract the value of the Rs1 register from the instruction
+//converts it to a decimal value and returns it.
+//Called by: parse_register, Decode()
+//Agurment: std::string representing an instruction
+//Returns: an integer representing the decimal value of the Rs1 register
+//****************************************************
 
 int sub_parse_reg_rs1(std::string instr) {
     int rs1_start = 15;
@@ -392,7 +406,14 @@ int sub_parse_reg_rs1(std::string instr) {
     return rs1_deci_value;
 }
 
-
+//****************************************************
+//sub_parse_reg_rs2 will take a std::string arg and then
+//extract the value of the destination register from the instruction
+//converts it to a decimal value and returns it.
+//Called by: parse_register, Decode()
+//Agurment: std::string representing an instruction
+//Returns: an integer representing the decimal value of the Rs2 register
+//****************************************************
 int sub_parse_reg_rs2(std::string instr){
     int rs2_start = 20;
     int rs2_end = 24;
