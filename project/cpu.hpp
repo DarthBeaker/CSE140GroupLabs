@@ -5,28 +5,41 @@
 
 class Cpu{
 private:
-    //for sample_part1: x1 = 0x20, x2 = 0x5, x10 = 0x70, x11 = 0x4
+    // //for sample_part1: x1 = 0x20, x2 = 0x5, x10 = 0x70, x11 = 0x4
+    // int rf[32] = {
+    //     0, 0x20, 0x5, 0, 
+    //     0, 0, 0, 0, 
+    //     0, 0, 0x70, 0x4,
+    //     0, 0, 0, 0,
+    //     0, 0, 0, 0,
+    //     0, 0, 0, 0,
+    //     0, 0, 0, 0,
+    //     0, 0, 0, 0
+    //     };
+    // //for sample_part1: 0x70 = 0x5, 0x74 = 0x10 (remember each entry count by 4)
+    // int d_mem[32] = {
+    //     0, 0, 0, 0, 
+    //     0, 0, 0, 0, 
+    //     0, 0, 0, 0,
+    //     0, 0, 0, 0,
+    //     0, 0, 0, 0,
+    //     0, 0, 0, 0,
+    //     0, 0, 0, 0,
+    //     0x5, 0x10, 0, 0
+    //     };
+    //for sample_part2: s0 = 0x20, a0 = 0x5, a1 = 0x2, a2 = 0xa, a3 = 0xf
     int rf[32] = {
-        0, 0x20, 0x5, 0, 
         0, 0, 0, 0, 
-        0, 0, 0x70, 0x4,
-        0, 0, 0, 0,
+        0, 0, 0, 0, 
+        0x20, 0, 0x5, 0x2,
+        0xa, 0xf, 0, 0,
         0, 0, 0, 0,
         0, 0, 0, 0,
         0, 0, 0, 0,
         0, 0, 0, 0
         };
-    //for sample_part1: 0x70 = 0x5, 0x74 = 0x10 (remember each entry count by 4)
-    int d_mem[32] = {
-        0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0x5, 0x10, 0, 0
-        };
+    //for sample_part2: Initialize d_mem array to all zero’s
+    int d_mem[32] = {0};
     int pc;
     int next_pc;
     std::string alu_ctrl;
@@ -65,7 +78,12 @@ private:
     int read_d_mem;
     int dest_reg;
 
+    //for running the loop
     bool if_more_instr;
+
+    //for jalr & jal
+    bool jump;
+    int jump_target;
 
 public:
     Cpu();

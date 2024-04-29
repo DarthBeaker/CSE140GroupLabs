@@ -35,6 +35,8 @@ void Cpu::Decode() {  //this is the rf call
     funct_7 = parse_funct7(instruction_fetched);
     imme = parse_immediate(instruction_fetched);
     //cout << "funct_3: " << funct_3 << " funct_7: " << funct_7 << "\n";
+    //cout << "imme: " << imme << "\n";
+    //cout << "rs1: " << sub_parse_reg_rs1(instruction_fetched) << "\n";
     //borrowed from parse register function that chooses the registers?
     read_data_1 = rf[sub_parse_reg_rs1(instruction_fetched)];
     read_data_2 = rf[sub_parse_reg_rs2(instruction_fetched)];
@@ -42,15 +44,17 @@ void Cpu::Decode() {  //this is the rf call
 
     if(op == "0110011" || op == "1100111" /* jalr */ || op == "1101111" /*jal*/ || op == "0000011" || op == "0010011") {
         dest_reg = sub_parse_reg_rd(instruction_fetched); //I think this is all JAL needs JLP
-        //if(op == "1101111"){
-            // should work JLP
-        //}
-        if(op == "1100111") {
-            
+        if(op == "1101111"){
+            read_data_1 = pc;
+            read_data_2 = imme;
+            //cout << "read_data_1: " << read_data_1 << " read_data_2: " << read_data_2 << "\n";
+        }
+        else if(op == "1100111") {
+            read_data_2 = imme;
+            //cout << "read_data_1: " << read_data_1 << "read_data_2" << read_data_2 << "\n";
             //PC = R[s1] + imme we need to do this
             //PC = rf[sub_parse_reg_rs1(instruction_fetched)] + imme
         }
-
         else if(op == "0110011" || op == "0000011" || op == "0010011") {
                 
             if(op == "0000011" || op == "0010011") {
@@ -169,7 +173,7 @@ void Cpu::ControlUnit(std::string opcode) {     //opcode is 7-bits
     mem_read = false;
     mem_write = false;
     branch = false;
-    
+    jump = false;
 
     //if R-type JLP
     if(opcode == "0110011") {
@@ -177,7 +181,6 @@ void Cpu::ControlUnit(std::string opcode) {     //opcode is 7-bits
         alu_op = 10;
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
     } 
-    
     //if lw; I-type JLP
     else if(opcode == "0000011") {
         //reg_write = true; 
@@ -187,7 +190,6 @@ void Cpu::ControlUnit(std::string opcode) {     //opcode is 7-bits
         alu_op = 00;
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
     } //JLP
-
     //I type not lw
     else if (opcode == "0010011") { //andi, ori, addi JLP
         alu_src = true;
@@ -196,41 +198,34 @@ void Cpu::ControlUnit(std::string opcode) {     //opcode is 7-bits
 
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
     }
-   
     //S-type, sw JLP
-    if(opcode == "0100011") { //if sw, same as lw, with mem_write true JLP
+    else if(opcode == "0100011") { //if sw, same as lw, with mem_write true JLP
         alu_op = 00;
         mem_read = true;
         mem_write = true;
         alu_src = true;         //for Mux 0 or 1
         alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
     }
-
     //if SB JLP
-    if(opcode == "1100011") {
+    else if(opcode == "1100011") {
         branch = true;
         alu_op = 01;
+        alu_ctrl = Alu_Ctrl(funct_3, funct_7, alu_op);
     }
-
-
-    ///*
         //if JALR 1100111 is an I instruction...
-        if(opcode == "1100111") {
-            alu_op = 00; //set to add
-            //branch = true; 
-            alu_src = true;
-            reg_write = true; //writing the return address back
-            
-        }
-         //JAL 1101111
-         if(opcode == "1101111") {
-            alu_op == 00; //set to add
-            //branch = true;
-            reg_write = true; 
-            alu_src = true;
-
-         }
-    //*/
+    else if(opcode == "1100111") {
+        alu_ctrl = "0010"; //set to add
+        jump = true; 
+        alu_src = true;
+        reg_write = true; //writing the return address back
+    }
+    //JAL 1101111
+    else if(opcode == "1101111") {
+        alu_ctrl = "0010"; //set to add
+        jump = true;
+        reg_write = true; 
+        alu_src = true;
+    }
 
    
 }
@@ -240,13 +235,12 @@ void Cpu::ControlUnit(std::string opcode) {     //opcode is 7-bits
 void Cpu::Fetch(std::string filename_input) {
 
     //Updating PC Value
-    if(!branch || !alu_zero){//if not branch
+    if((!branch || !alu_zero) && !jump){//if not branch && not jump
         pc = next_pc;
     }
-    // This will be where we also check for jal/jalr
-    // else if(){
-    //      pc = read_data_s + imme;  maybe? JLP
-    // }
+    else if(jump){
+        pc = jump_target;
+    }
     else{
         pc = branch_target;
     }
@@ -289,6 +283,7 @@ void Cpu::Fetch(std::string filename_input) {
 
 void Cpu::Execute(){
     //cout << "alu_ctrl: " << alu_ctrl << "\n";
+    //cout << "read_data_1: " << read_data_1 << " read_data_2" << read_data_2 << "\n";
     //AND
     if(alu_ctrl == "0000"){
         alu_output = read_data_1 & read_data_2;
@@ -313,6 +308,9 @@ void Cpu::Execute(){
             alu_zero == true;
         }
     }
+    else if(jump){
+        jump_target = alu_output; //in decode I just set it up so that pc or rs1 is in read_data_1 and that the imme is in read_data_2
+    }
     //cout << "alu_output: " << alu_output << "\n";
 }
 
@@ -327,13 +325,16 @@ void Cpu::Writeback(){
         if(mem_to_reg){
             //read data read in Mem() by LW
             rf[dest_reg] = read_d_mem;
-            cout << "x" << dest_reg << " is modified to 0x" << hex << read_d_mem << "\n";
+            cout << "x" << dec << dest_reg << " is modified to 0x" << hex << read_d_mem << "\n";
 
         }
+        else if(jump){
+            rf[dest_reg] = next_pc;
+            cout << "x" << dec << dest_reg << " is modified to 0x" << hex << next_pc << "\n";
+        }
         else{
-            //read data from ALU_output and store in register
             rf[dest_reg] = alu_output;
-            cout << "x" << dest_reg << " is modified to 0x" << hex <<  alu_output << "\n";
+            cout << "x" << dec << dest_reg << " is modified to 0x" << hex <<  alu_output << "\n";
         }
     }
     
@@ -343,5 +344,13 @@ void Cpu::Writeback(){
 
     }
 
-    cout << "PC is modified to 0x" << hex << pc << "\n";
+    if(!branch && !jump){
+        cout << "PC is modified to 0x" << hex << pc << "\n";
+    }
+    else if(branch && alu_zero){
+        cout << "PC is modified to 0x" << hex << branch_target << "\n";
+    }
+    else if(jump){
+        cout << "PC is modified to 0x" << hex << jump_target << "\n";
+    }
 }

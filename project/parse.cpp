@@ -120,7 +120,7 @@ int parse_immediate(std::string instr){
    
     int j = 0;
 
-    if(op == 'S' || op == 'B') {
+    if(op == opCodeLU[4] || op == opCodeLU[5]) {
         len = 12;
         imme = "000000000000";
     }
@@ -317,19 +317,19 @@ int twosComp(int num) {
 //int to be printed
 //******************************************
 void parse_register(std::string instr){
-    char op = parse_instructions(instr);
+    std::string op = parse_instructions(instr);
 
     //all have register rd
-    if(op == 'R' || op == 'J' || op == 'I') {
+    if(op == opCodeLU[0] || op == opCodeLU[6] || op == opCodeLU[1] || op == opCodeLU[2] || op == opCodeLU[3]) {
         int rd = sub_parse_reg_rd(instr);
 
         //only R and I have both RD and RS1
-        if(op == 'R' || op == 'I') {
+        if(op == opCodeLU[0] || op == opCodeLU[1] || op == opCodeLU[2] || op == opCodeLU[3]) {
             int rs1 = sub_parse_reg_rs1(instr);
             printf("Rs1: x%i \n", rs1);
 
             //only R has RD, RS1 and RS2
-            if(op == 'R'){
+            if(op == opCodeLU[0]){
                 int rs2 = sub_parse_reg_rs2(instr);
                 printf("Rs2: x%i \n", rs2);
             }
@@ -338,7 +338,7 @@ void parse_register(std::string instr){
         printf("Rd: x%i \n", rd);
     }
     //only have rs 1 and rs 2
-    else if(op == 'S' || op == 'B') {
+    else if(op == opCodeLU[4] || op == opCodeLU[5]){
         int rs1 = sub_parse_reg_rs1(instr);
         printf("Rs1: x%i \n", rs1);
         int rs2 = sub_parse_reg_rs2(instr);
@@ -464,185 +464,185 @@ beq bge blt bne
 //UJ Type
 jal -- done
 /****************************************/
-void print_instructions(std::string instr){
-    char instr_type = parse_instructions(instr);
-    int funct3 = parse_funct3(instr);
-    int funct7 = parse_funct7(instr);
-    //for the instructions given only I has different opcodes
-    //so I must get the opcode so I can search through each one for the right codes
-    int op_start = 0;
-    int op_end = 7;
-    int bin_bit_value = 1;
-    int opcode = 0;
-    for (int i = op_start; i < op_end; i++) {
-        if(instr[instrSz - i - 1] == '0') {
-            bin_bit_value *= 2;
-        }
-        else {
-            opcode += bin_bit_value;
-            bin_bit_value *= 2;
-        }
-    }
+// void print_instructions(std::string instr){
+//     string instr_type = parse_instructions(instr);
+//     int funct3 = parse_funct3(instr);
+//     int funct7 = parse_funct7(instr);
+//     //for the instructions given only I has different opcodes
+//     //so I must get the opcode so I can search through each one for the right codes
+//     int op_start = 0;
+//     int op_end = 7;
+//     int bin_bit_value = 1;
+//     int opcode = 0;
+//     for (int i = op_start; i < op_end; i++) {
+//         if(instr[instrSz - i - 1] == '0') {
+//             bin_bit_value *= 2;
+//         }
+//         else {
+//             opcode += bin_bit_value;
+//             bin_bit_value *= 2;
+//         }
+//     }
 
-    printf("%s", "Instruction Type: ");
-    if(instr_type != 'B' && instr_type != 'J'){
-        printf("%c\n", instr_type);
-    }
-    else if(instr_type == 'J'){
-        printf("UJ\n");
-    }
-    else{
-        printf("SB\n"); //instruction type stored as char we shortened SB -> B internally and we can't just print B so we must print SB instead
-    }
-    printf("%s", "Operation: ");
+//     printf("%s", "Instruction Type: ");
+//     if(instr_type != 'B' && instr_type != 'J'){
+//         printf("%c\n", instr_type);
+//     }
+//     else if(instr_type == 'J'){
+//         printf("UJ\n");
+//     }
+//     else{
+//         printf("SB\n"); //instruction type stored as char we shortened SB -> B internally and we can't just print B so we must print SB instead
+//     }
+//     printf("%s", "Operation: ");
 
-    switch(instr_type){
-        case 'R':
-            switch(funct3){
-                case 0:
-                    //funct7 is only 0 or 32 I believe
-                    if(funct7 == 0){
-                        printf("add \n");
-                    }
-                    else{
-                        printf("sub \n");
-                    }
-                    break;
-                case 1:
-                    printf("sll \n");
-                    break;
-                case 2:
-                    printf("slt \n");
-                    break;
-                case 3:
-                    printf("sltu \n");
-                    break;
-                case 4:
-                    printf("xor \n");
-                    break;
-                case 5:
-                    //funct7 is only 0 or 32 I believe
-                    if(funct7 == 0){
-                        printf("srl \n");
-                    }
-                    else{
-                        printf("sra \n");
-                    }
-                    break;
-                case 6:
-                    printf("or \n");
-                    break;
-                case 7:
-                    printf("and \n");
-                    break;  
-            }
-            break;
-        case 'I':
-            //printf("opcode: %i", opcode);
-            switch(opcode){
-                case 3:
-                    switch(funct3){
-                        case 0:
-                            printf("lb \n");
-                            break;
-                        case 1:
-                            printf("lh \n");
-                            break;
-                        case 2:
-                            printf("lw \n");
-                            break;
-                    }
-                    break;
-                case 19:
-                    switch(funct3){
-                        case 0:
-                            printf("addi \n");
-                            break;
-                        case 1:
-                            printf("slli \n");
-                            break;
-                        case 2:
-                            printf("slti \n");
-                            break;
-                        case 3:
-                            printf("sltiu \n");
-                            break;
-                        case 4:
-                            printf("xori \n");
-                            break;
-                        case 5:
-                            if(funct7 == 0){
-                                printf("srli \n");
-                            }
-                            else{
-                                printf("srai \n");
-                            }
-                            break;
-                        case 6:
-                            printf("ori \n");
-                            break;
-                        case 7:
-                            printf("andi \n");
-                            break;
-                    }
-                    break;
-                case 103:
-                    // can only be jalr
-                    printf("jalr \n");
-                    break;
-            }
-            break;
-        case 'S':
-            switch(funct3){
-                case 0:
-                    printf("sb \n");
-                    break;
-                case 1:
-                    printf("sh \n");
-                    break;
-                case 2:
-                    printf("sw \n");
-                    break;
-            }
-            break;
-        case 'B':
-            switch(funct3){
-                case 0:
-                    printf("beq \n");
-                    break;
-                case 1:
-                    printf("bne \n");
-                    break;
-                case 4:
-                    printf("blt \n");
-                    break;
-                case 5:
-                    printf("bge \n");
-                    break;
-            }
-            break;
-        case 'J': //only 1 UJ statment so just print what it is
-            printf("jal \n");
-            break;
-        default:
-            printf("ERROR: INVALID INSTRUCTION \n");
-    }
-    parse_register(instr);
-    //call parse_funct3 and print the decimal value of it for now.
-    if(instr_type != 'J'){
-        printf("Funct3: %i\n", funct3);
-    }
+//     switch(instr_type){
+//         case 'R':
+//             switch(funct3){
+//                 case 0:
+//                     //funct7 is only 0 or 32 I believe
+//                     if(funct7 == 0){
+//                         printf("add \n");
+//                     }
+//                     else{
+//                         printf("sub \n");
+//                     }
+//                     break;
+//                 case 1:
+//                     printf("sll \n");
+//                     break;
+//                 case 2:
+//                     printf("slt \n");
+//                     break;
+//                 case 3:
+//                     printf("sltu \n");
+//                     break;
+//                 case 4:
+//                     printf("xor \n");
+//                     break;
+//                 case 5:
+//                     //funct7 is only 0 or 32 I believe
+//                     if(funct7 == 0){
+//                         printf("srl \n");
+//                     }
+//                     else{
+//                         printf("sra \n");
+//                     }
+//                     break;
+//                 case 6:
+//                     printf("or \n");
+//                     break;
+//                 case 7:
+//                     printf("and \n");
+//                     break;  
+//             }
+//             break;
+//         case 'I':
+//             //printf("opcode: %i", opcode);
+//             switch(opcode){
+//                 case 3:
+//                     switch(funct3){
+//                         case 0:
+//                             printf("lb \n");
+//                             break;
+//                         case 1:
+//                             printf("lh \n");
+//                             break;
+//                         case 2:
+//                             printf("lw \n");
+//                             break;
+//                     }
+//                     break;
+//                 case 19:
+//                     switch(funct3){
+//                         case 0:
+//                             printf("addi \n");
+//                             break;
+//                         case 1:
+//                             printf("slli \n");
+//                             break;
+//                         case 2:
+//                             printf("slti \n");
+//                             break;
+//                         case 3:
+//                             printf("sltiu \n");
+//                             break;
+//                         case 4:
+//                             printf("xori \n");
+//                             break;
+//                         case 5:
+//                             if(funct7 == 0){
+//                                 printf("srli \n");
+//                             }
+//                             else{
+//                                 printf("srai \n");
+//                             }
+//                             break;
+//                         case 6:
+//                             printf("ori \n");
+//                             break;
+//                         case 7:
+//                             printf("andi \n");
+//                             break;
+//                     }
+//                     break;
+//                 case 103:
+//                     // can only be jalr
+//                     printf("jalr \n");
+//                     break;
+//             }
+//             break;
+//         case 'S':
+//             switch(funct3){
+//                 case 0:
+//                     printf("sb \n");
+//                     break;
+//                 case 1:
+//                     printf("sh \n");
+//                     break;
+//                 case 2:
+//                     printf("sw \n");
+//                     break;
+//             }
+//             break;
+//         case 'B':
+//             switch(funct3){
+//                 case 0:
+//                     printf("beq \n");
+//                     break;
+//                 case 1:
+//                     printf("bne \n");
+//                     break;
+//                 case 4:
+//                     printf("blt \n");
+//                     break;
+//                 case 5:
+//                     printf("bge \n");
+//                     break;
+//             }
+//             break;
+//         case 'J': //only 1 UJ statment so just print what it is
+//             printf("jal \n");
+//             break;
+//         default:
+//             printf("ERROR: INVALID INSTRUCTION \n");
+//     }
+//     parse_register(instr);
+//     //call parse_funct3 and print the decimal value of it for now.
+//     if(instr_type != 'J'){
+//         printf("Funct3: %i\n", funct3);
+//     }
     
-    if(instr_type == 'R'){
-        printf("Funct7: %i\n", funct7);
-    }
-    else{
-        printf("Immediate: %i ", parse_immediate(instr));
-        if(instr_type != 'B'){
-            printf("(or 0x%hX)\n", parse_immediate(instr));
-        }
-        else{
-            printf("\n");
-        }
-    }
-}
+//     if(instr_type == 'R'){
+//         printf("Funct7: %i\n", funct7);
+//     }
+//     else{
+//         printf("Immediate: %i ", parse_immediate(instr));
+//         if(instr_type != 'B'){
+//             printf("(or 0x%hX)\n", parse_immediate(instr));
+//         }
+//         else{
+//             printf("\n");
+//         }
+//     }
+// }
