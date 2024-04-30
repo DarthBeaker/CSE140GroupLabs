@@ -17,14 +17,14 @@ Cpu::~Cpu(){
 
 }
 
-//simplistic version of Reading the register file.
-//arg is the desired register; it returns the int...
+// //simplistic version of Reading the register file.
+// //arg is the desired register; it returns the int...
 
-int Cpu::Read_rf(int ptr) {
+// int Cpu::Read_rf(int ptr) {
     
-    return rf[ptr];
+//     return rf[ptr];
 
-}
+// }
 
 void Cpu::Decode() {  //this is the rf call
     string op;
@@ -34,95 +34,73 @@ void Cpu::Decode() {  //this is the rf call
     funct_3 = parse_funct3(instruction_fetched);
     funct_7 = parse_funct7(instruction_fetched);
     imme = parse_immediate(instruction_fetched);
-    //cout << "funct_3: " << funct_3 << " funct_7: " << funct_7 << "\n";
-    //cout << "imme: " << imme << "\n";
-    //cout << "rs1: " << sub_parse_reg_rs1(instruction_fetched) << "\n";
-    //borrowed from parse register function that chooses the registers?
+    
     read_data_1 = rf[sub_parse_reg_rs1(instruction_fetched)];
     read_data_2 = rf[sub_parse_reg_rs2(instruction_fetched)];
+
     ControlUnit(op); // all instructions regardless of its code go to controlunit JLP
 
     if(op == "0110011" || op == "1100111" /* jalr */ || op == "1101111" /*jal*/ || op == "0000011" || op == "0010011") {
-        dest_reg = sub_parse_reg_rd(instruction_fetched); //I think this is all JAL needs JLP
-        if(op == "1101111"){
+        dest_reg = sub_parse_reg_rd(instruction_fetched); 
+        if(op == "1101111"){    //jal instr
             read_data_1 = pc;
             read_data_2 = imme;
-            //cout << "read_data_1: " << read_data_1 << " read_data_2: " << read_data_2 << "\n";
         }
-        else if(op == "1100111") {
+        else if(op == "1100111") { //jalr instr
             read_data_2 = imme;
-            //cout << "read_data_1: " << read_data_1 << "read_data_2" << read_data_2 << "\n";
-            //PC = R[s1] + imme we need to do this
-            //PC = rf[sub_parse_reg_rs1(instruction_fetched)] + imme
         }
         else if(op == "0110011" || op == "0000011" || op == "0010011") {
                 
             if(op == "0000011" || op == "0010011") {
                 read_data_2 = imme;
-
-                //Think we can safely remove this
-                // if(op == "0000011" && funct_3 == 0b010) {  //if lw instr send opcode 
-                //     ControlUnit(00000011); // 
-                // } 
-                // else { // if it is not lw, and it is I, it must have this opcode JLP
-                //     ControlUnit(0010011);
-                // }
             }
-             //Don't think we need this either JLP   
-            // else if(op == "0110011") {    //pass the R opcode to Control_Unit here JLP
-            //     ControlUnit(0110011);        //something like this JLP
-            // }
         }
     }
     else if(op == "0100011" ) {   //S opcode, but really just checking for sw 
         read_data_2 = imme;
         read_data_s = rf[sub_parse_reg_rs2(instruction_fetched)];
-        //ControlUnit(0100011);
     }
     else if(op == "1100011") {   //SB opcode, but really just checkign for beq JLP
         read_imme = imme;
-        //ControlUnit(1100011);
-    //printf("Rs2: x%i \n", rs2);
     }
 }
 
-//arg is a 8-bit memory address? No bigger?
-//using a string, since hex is 0 - F
-// can adjust JLP
-int Cpu::Trans_Hex(std::string hex) {
-    int sum = 0;
-    for(int i = 0; i < 8; i++) {
-        if(isdigit(hex[i])) {
-            if(hex[i] == 'A') {
-                sum += 11;
-            }
-            else if(hex[i] == 'B'){
-                sum += 12;
-            }
-            else if(hex[i] == 'C'){
-                sum += 13;
-            }
-            else if(hex[i] == 'D'){
-                sum += 14;
-            }
-            else if(hex[i] == 'E'){
-                sum += 15;
-            }
-            else if(hex[i] == 'F') {
-                sum += 16;
-            }
-        }
-        else {
-            sum += hex[i];
-        }
-    }
+// //arg is a 8-bit memory address? No bigger?
+// //using a string, since hex is 0 - F
+// // can adjust JLP
+// int Cpu::Trans_Hex(std::string hex) {
+//     int sum = 0;
+//     for(int i = 0; i < 8; i++) {
+//         if(isdigit(hex[i])) {
+//             if(hex[i] == 'A') {
+//                 sum += 11;
+//             }
+//             else if(hex[i] == 'B'){
+//                 sum += 12;
+//             }
+//             else if(hex[i] == 'C'){
+//                 sum += 13;
+//             }
+//             else if(hex[i] == 'D'){
+//                 sum += 14;
+//             }
+//             else if(hex[i] == 'E'){
+//                 sum += 15;
+//             }
+//             else if(hex[i] == 'F') {
+//                 sum += 16;
+//             }
+//         }
+//         else {
+//             sum += hex[i];
+//         }
+//     }
 
-    return sum; //could do sum/4, can also be done where returned JLP
-}
+//     return sum; //could do sum/4, can also be done where returned JLP
+// }
 
 void Cpu::Mem() {
-    //need a function that will take the hex memroy address
-    //and translate it into the array index we want
+   
     int addr = 0;
     //ALU calculates target memory address in Exe().
 
