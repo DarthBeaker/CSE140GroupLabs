@@ -38,6 +38,17 @@ private:
         0, 0, 0, 0,
         0, 0, 0, 0
         };
+    //for printing register names
+    std::string registerNames[32] = {
+        "zero", "ra", "sp", "gp",
+        "tp", "t0", "t1", "t2",
+        "s0", "s1", "a0", "a1",
+        "a2", "a3", "a4", "a5",
+        "a6", "a7", "s2", "s3",
+        "s4", "s5", "s6", "s7",
+        "s8", "s9", "s10", "s11",
+        "t3", "t4", "t5", "t6"
+    };
     //for sample_part2: Initialize d_mem array to all zero’s
     int d_mem[32] = {0};
     int pc;

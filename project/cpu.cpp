@@ -9,7 +9,7 @@ using namespace std;
 Cpu::Cpu(){
     pc = 0x0;
     total_clock_cycles = 0;
-    next_pc = pc + 4;
+    next_pc = 0;
     if_more_instr = true;
 }
 
@@ -254,7 +254,7 @@ void Cpu::Fetch(std::string filename_input) {
         //characters on a line and the current pc counter divided by 4 (since it increments by 4 each time 
         // unless branching but regardless it's multiples of four)
         // double check this actually works, at the least it should be close
-        int file_position = (pc/4 - 1) * 34; 
+        int file_position = (pc/4) * 34; 
         instruction_file.seekg(file_position);
         
         //pull instruction
@@ -264,7 +264,7 @@ void Cpu::Fetch(std::string filename_input) {
     }
 
     //find eof()
-    int file_position = (pc/4) * 34; 
+    int file_position = (pc/4 + 1) * 34; 
     string dummy_line;
     instruction_file.seekg(file_position);
     //pull instruction
@@ -318,23 +318,26 @@ void Cpu::Execute(){
 void Cpu::Writeback(){
     //Cycle complete increment total clock cycles
     total_clock_cycles++;
-    cout << "Total Clock Cycle " << total_clock_cycles << " :\n"; 
+    cout << "total_clock_cycles " << total_clock_cycles << " :\n"; 
 
     //if writing to memory we don't need to write back
     if(reg_write){
         if(mem_to_reg){
             //read data read in Mem() by LW
             rf[dest_reg] = read_d_mem;
-            cout << "x" << dec << dest_reg << " is modified to 0x" << hex << read_d_mem << "\n";
+            cout << registerNames[dest_reg] << " is modified to 0x" << hex <<  read_d_mem << "\n";
+            //cout << "x" << dec << dest_reg << " is modified to 0x" << hex << read_d_mem << "\n";
 
         }
         else if(jump){
             rf[dest_reg] = next_pc;
-            cout << "x" << dec << dest_reg << " is modified to 0x" << hex << next_pc << "\n";
+            cout << registerNames[dest_reg] << " is modified to 0x" << hex <<  next_pc << "\n";
+            //cout << "x" << dec << dest_reg << " is modified to 0x" << hex << next_pc << "\n";
         }
         else{
             rf[dest_reg] = alu_output;
-            cout << "x" << dec << dest_reg << " is modified to 0x" << hex <<  alu_output << "\n";
+            cout << registerNames[dest_reg] << " is modified to 0x" << hex <<  alu_output << "\n";
+            //cout << "x" << dec << dest_reg << " is modified to 0x" << hex <<  alu_output << "\n";
         }
     }
     
@@ -345,12 +348,12 @@ void Cpu::Writeback(){
     }
 
     if(!branch && !jump){
-        cout << "PC is modified to 0x" << hex << pc << "\n";
+        cout << "pc is modified to 0x" << hex << next_pc << "\n";
     }
     else if(branch && alu_zero){
-        cout << "PC is modified to 0x" << hex << branch_target << "\n";
+        cout << "pc is modified to 0x" << hex << branch_target << "\n";
     }
     else if(jump){
-        cout << "PC is modified to 0x" << hex << jump_target << "\n";
+        cout << "pc is modified to 0x" << hex << jump_target << "\n";
     }
 }
