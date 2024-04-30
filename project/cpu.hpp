@@ -76,9 +76,6 @@ private:
     void ControlUnit(std::string opcode);
     std::string Alu_Ctrl(int funct_3, int funct_7, int alu_op);
     
-    //our own functions
-    int Trans_Hex(std::string hex);
-    int Read_rf(int ptr);
 
     //for storing between the stages
     int read_data_1;

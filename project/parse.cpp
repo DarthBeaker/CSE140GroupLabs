@@ -210,7 +210,7 @@ int parse_immediate(std::string instr){
 
 
 /*
-//sub_parse_Imm takes a char* & 2 ints, the instruction
+//sub_parse_Imm takes std::string & 2 ints, the instruction
 //entered by the user, the start & end of the instruction
 // and parses ? digits depending on 
 //what instruction type it is and calculates the decimal value
@@ -307,54 +307,11 @@ int twosComp(int num) {
     return -imm_deci_value;
 }
 
-
-//******************************************
-//parse_register will take a std::string arg and then
-//read the register value and return the int associated with the c-string of binary
-//might want to also pass what specific register we're trying to read if passing the
-//full instruction or we could in the main function break it up into registers
-//based on instruction type and just have this function read them and return the proper
-//int to be printed
-//******************************************
-void parse_register(std::string instr){
-    std::string op = parse_instructions(instr);
-
-    //all have register rd
-    if(op == opCodeLU[0] || op == opCodeLU[6] || op == opCodeLU[1] || op == opCodeLU[2] || op == opCodeLU[3]) {
-        int rd = sub_parse_reg_rd(instr);
-
-        //only R and I have both RD and RS1
-        if(op == opCodeLU[0] || op == opCodeLU[1] || op == opCodeLU[2] || op == opCodeLU[3]) {
-            int rs1 = sub_parse_reg_rs1(instr);
-            printf("Rs1: x%i \n", rs1);
-
-            //only R has RD, RS1 and RS2
-            if(op == opCodeLU[0]){
-                int rs2 = sub_parse_reg_rs2(instr);
-                printf("Rs2: x%i \n", rs2);
-            }
-        }
-
-        printf("Rd: x%i \n", rd);
-    }
-    //only have rs 1 and rs 2
-    else if(op == opCodeLU[4] || op == opCodeLU[5]){
-        int rs1 = sub_parse_reg_rs1(instr);
-        printf("Rs1: x%i \n", rs1);
-        int rs2 = sub_parse_reg_rs2(instr);
-        printf("Rs2: x%i \n", rs2);
-    }
-    else{
-        printf("ERROR: INVALID INSTRUCTION INPUT \n");
-    }
-
-}
-
 //****************************************************
 //sub_parse_reg_rd will take a std::string arg and then
 //extract the value of the destination register from the instruction
 //converts it to a decimal value and returns it.
-//Called by: parse_register, Decode()
+//Called by: Decode()
 //Agurment: std::string representing an instruction
 //Returns: an integer representing the decimal value of the destination register
 //****************************************************
