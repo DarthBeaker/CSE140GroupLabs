@@ -183,7 +183,7 @@ void Cpu::ControlUnit(std::string opcode) {     //opcode is 7-bits
     } 
     //if lw; I-type JLP
     else if(opcode == "0000011") {
-        //reg_write = true; 
+        reg_write = true; 
         alu_src = true;
         mem_to_reg = true; 
         mem_read = true;
@@ -347,7 +347,7 @@ void Cpu::Writeback(){
 
     }
 
-    if(!branch && !jump){
+    if((!branch || !alu_zero) && !jump){
         cout << "pc is modified to 0x" << hex << next_pc << "\n";
     }
     else if(branch && alu_zero){
